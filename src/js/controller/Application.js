@@ -28,7 +28,10 @@ var Application = function (config) {
     fullScreen: false,
     theme: 'dark',
     cameraConfig: {},
-    ambientConfig: {}
+    ambientConfig: {},
+    defaultSceneConfig: {
+      fog: true
+    }
   }, config);
 
   this.initialConfig = config;
@@ -149,8 +152,11 @@ Application.prototype = {
 
   createDefaultScene: function () {
     var me = this,
+      config = me.getConfig(),
       defaultScene = new THREE.Scene();
-    defaultScene.fog = new THREE.Fog(me.theme.fogColor, 2000, 4000);
+    if (config.defaultSceneConfig.fog) {
+      defaultScene.fog = new THREE.Fog(me.theme.fogColor, 2000, 4000);
+    }
     me
       .addScene(defaultScene, 'default')
       .setActiveScene('default');
@@ -420,10 +426,12 @@ Application.prototype = {
   }
 };
 
-Application.quickLaunch = function (options) {
+Application.run = function (options) {
+  _.merge({
+    init: function () {},
+    update: function () {},
+  }, options)
   assert(options.id, 'canvas id required');
-  assert(options.init, 'init function required');
-  assert(options.update, 'update function required');
 
   var QuickLaunch = function (options) {
     Application.call(this, options);

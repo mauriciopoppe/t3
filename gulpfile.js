@@ -19,7 +19,10 @@ function run(bundler, minify) {
 
   console.time('build');  
   return bundler
-    .bundle({debug: true})
+    .bundle({
+      debug: true,
+      standalone: pkg.name
+    })
     .pipe(source(pkg.name + (minify ? '.min' : '') + '.js'))
     .pipe(gulp.dest('./build/'))
     .on('end', function () {
@@ -52,7 +55,7 @@ gulp.task('browserify', function () {
 });
 
 gulp.task('browserSync', ['build'], function () {
-  browserSync.init(['build/**'], {
+  browserSync.init(['./build/**/*'], {
     server: {
       baseDir: 'build'
     }

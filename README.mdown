@@ -1,38 +1,61 @@
-T3 - A base template for THREE.js projects
-=========
+T3 - three.js template
+===
+T3 is a template to build three.js applications without worrying about the common set up process, this project is inspired by [Jeromme's three.js boilerplate](https://github.com/jeromeetienne)
 
-Version
-----
-
-0.0.1
-
-TODO
-----
-
-sprites + atlas
-TileMaps
-sound
-physics
-camera
-shaders
-emitters
-multiplayer
+Features
+--------
+- Defined with UMD (compatible with CommonJS, AMD or fallback to a global variable)
+- Live reloading through browser-sync
+- Micro scene handler for your multistaged app/game :)
+- Micro camera manager
+- Keyboard manager a simple yet useful utility to catch keyboard events and use it on your app
+- Themes for the default scene
+- Frame rate control
 
 Installation
---------------
-
-```sh
+------------
+After cloning the project just install the required node dependencies with:
+```javascript
 npm install
 ```
 
-Starting the server
---------------
-
-```sh
+And run the application with:
+```javascript
 gulp
 ```
 
-License
-----
+Getting Started
+---------------
+After creating the bundle import the file `T3.js` or `T3.min.js` (which can be loaded with the source map to debug the minified file) and create a container for your app (which is required to have an `id`)
 
-MIT
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>T3</title>
+</head>
+<body>
+	<!-- application wrapper -->
+	<div id="canvas-wrapper" style="position: relative"></div>
+	<script src="lib/three.js"></script>
+	<script src="T3.min.js"></script>
+	<script>
+		T3.Application.run({
+			id: 'canvas-wrapper'
+		});
+	</script>
+</body>
+</html>
+```
+
+`T3.Application` is a function whose instances can control a single element of your app, this means that you can have 
+
+
+How it works
+------------
+TODO
+
+Examples
+--------
+TODO
