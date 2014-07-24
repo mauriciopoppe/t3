@@ -3,6 +3,7 @@ var browserSync = require('browser-sync');
 var watchify = require('watchify');
 var browserify = require('browserify');
 var source = require('vinyl-source-stream');
+var exec = require('child_process').exec;
 var pkg = require('./package.json');
 
 // gulp extras
@@ -70,13 +71,18 @@ gulp.task('bump', ['build'], function () {
     .pipe(gulp.dest('./'));
 });
 
-gulp.task('tag', ['bump'], function () {
+gulp.task('tag', ['bump'], function (cb) {
   var version = pkg.version;
   var message = 'Release ' + version;
   gulp.src('./')
     .pipe(git.commit(message));
-  git.tag(version, message)
-  git.push('origin', 'master', {args: '--tags'});
+  git.tag(version, message);
+  exec('./push.sh', function (err, stdout, stderr) {
+    console.log(stdout);
+    console.log(stderr);
+    cb(err);
+  });
+  // git.push('origin', 'master', {args: '--tags'});
 });
 
 gulp.task('useWatchify', function () {
