@@ -27,7 +27,8 @@ var Application = function (config) {
     injectCache: false,
     fullScreen: false,
     theme: 'dark',
-    coordinatesConfig: {}
+    cameraConfig: {},
+    ambientConfig: {}
   }, config);
 
   this.initialConfig = config;
@@ -331,7 +332,7 @@ Application.prototype = {
     var config = this.getConfig();
     this.scenes['default']
       .add(
-        new Coordinates(config.coordinatesConfig, this.theme)
+        new Coordinates(config.ambientConfig, this.theme)
           .initDatGui(this.datgui)
           .mesh
       );
@@ -417,6 +418,25 @@ Application.prototype = {
   getFromCache: function (name) {
     return this.__t3cache__[name];
   }
+};
+
+Application.quickLaunch = function (options) {
+  assert(options.id, 'canvas id required');
+  assert(options.init, 'init function required');
+  assert(options.update, 'update function required');
+
+  var QuickLaunch = function (options) {
+    Application.call(this, options);
+    options.init.call(this, options);
+  };
+  QuickLaunch.prototype = Object.create(Application.prototype);
+
+  QuickLaunch.prototype.update = function (delta) {
+    Application.prototype.update.call(this, delta);
+    options.update.call(this, delta);
+  };
+
+  return new QuickLaunch(options);
 };
 
 module.exports = Application;
