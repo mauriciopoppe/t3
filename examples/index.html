@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>T3 test</title>
+</head>
+<body>
+	<div id="canvas-wrapper" style="position: relative"></div>
+	<script src="lib/three.js"></script>
+	<script src="dist/t3.js"></script>
+	<script>
+		t3.Application.run({
+			id: 'canvas-wrapper',
+			injectCache: true,
+			init: function () {
+				var geometry = new THREE.BoxGeometry(10, 10, 10);
+				var material = new THREE.MeshNormalMaterial();
+				this.cube = new THREE.Mesh(geometry, material);
+				this.cube.position.set(100, 100, 100);
+
+				this.activeScene
+					.add(this.cube)
+					.cache('cube');
+			},
+			update: function (delta) {
+				var cube = this.getFromCache('cube');
+				cube.rotation.x += 0.01;
+				cube.rotation.y += 0.01;
+			}
+		});
+
+		// var app = new MyApp({
+		// 	id: 'canvas-wrapper',
+		// 	width: 600,
+		// 	height: 400,
+		// 	theme: 'light',
+		// 	coordinatesConfig: {
+		// 		ground: false
+		// 	},
+		// 	fullScreen: false
+		// 	injectCache: true
+		// 	renderImmediately: true
+		// });
+	</script>
+</body>
+</html>

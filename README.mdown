@@ -1,3 +1,5 @@
+<script src="build/T3.js"></script>
+
 T3 - three.js template
 ===
 T3 is a template to build three.js applications without worrying about the common set up process, this project is inspired by [Jeromme's three.js boilerplate](https://github.com/jeromeetienne)
@@ -19,7 +21,7 @@ After cloning the project just install the required node dependencies with:
 npm install
 ```
 
-And run the application with:
+And create the bundle with:
 ```javascript
 gulp
 ```
@@ -48,6 +50,13 @@ After creating the bundle import the file `T3.js` or `T3.min.js` (which can be l
 </body>
 </html>
 ```
+
+<div id="canvas-1"></div>
+<script>
+	T3.Application.run({
+		id: 'canvas-1'
+	});	
+</script>
 
 `T3.Application` is a function whose instances can control a single element of your app, this means that you can have 
 

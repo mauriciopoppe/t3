@@ -1,23 +1,13 @@
 {
-  "name": "T3",
-  "version": "0.0.1",
-  "description": "A basic template for phaser",
+  "name": "t3",
+  "version": "0.1.0",
+  "description": "Boilerplate for THREEjs",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Mauricio Poppe",
   "license": "MIT",
-  "dependencies": {
-    "gulp": "~3.8.6",
-    "browser-sync": "~1.3.0",
-    "browserify": "~4.2.1",
-    "watchify": "~0.10.2",
-    "vinyl-source-stream": "~0.1.1",
-    "lodash": "~2.4.1",
-    "browserify-shim": "~3.6.0",
-    "minifyify": "~3.0.12"
-  },
   "browserify": {
     "transform": [
       "browserify-shim"
@@ -31,5 +21,17 @@
     "T3.Stats": "Stats",
     "T3.dat": "dat",
     "THREE": "global:THREE"
+  },
+  "devDependencies": {
+    "gulp": "~3.8.6",
+    "gulp-git": "~0.4.3",
+    "gulp-bump": "~0.1.10",
+    "lodash": "~2.4.1",
+    "browser-sync": "~1.3.0",
+    "browserify": "~4.2.1",
+    "watchify": "~0.10.2",
+    "vinyl-source-stream": "~0.1.1",
+    "browserify-shim": "~3.6.0",
+    "minifyify": "~3.0.12"
   }
 }

@@ -1,8 +1,8 @@
 require('./lib/OrbitControls');
-var T3 = {
+var t3 = {
   model: {
     Coordinates: require('./model/Coordinates')
   },
   Application: require('./controller/Application')
 };
-module.exports = T3;
+module.exports = t3;

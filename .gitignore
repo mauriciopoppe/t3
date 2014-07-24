@@ -1,11 +1,7 @@
 # Created by http://www.gitignore.io
 
-### phaser build ###
-build
-
 ### Bower ###
 bower_components
-
 
 ### WebStorm ###
 # Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm
