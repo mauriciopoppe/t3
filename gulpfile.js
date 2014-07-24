@@ -60,14 +60,18 @@ gulp.task('browserify', function () {
 gulp.task('browserSync', ['build'], function () {
   browserSync.init(['./examples/**/*'], {
     server: {
-      baseDir: 'examples'
+      baseDir: '.'
     }
   });
 });
 
 gulp.task('bump', ['build'], function () {
   return gulp.src(['./package.json', './bower.json'])
-    .pipe(bump())
+    .pipe(bump({
+      // type: 'major'
+      type: 'minor'
+      // type: 'patch'
+    }))
     .pipe(gulp.dest('./'));
 });
 

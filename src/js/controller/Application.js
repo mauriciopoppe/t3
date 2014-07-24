@@ -427,10 +427,10 @@ Application.prototype = {
 };
 
 Application.run = function (options) {
-  _.merge({
+  options = _.merge({
     init: function () {},
     update: function () {},
-  }, options)
+  }, options);
   assert(options.id, 'canvas id required');
 
   var QuickLaunch = function (options) {
