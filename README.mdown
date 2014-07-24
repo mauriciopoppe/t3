@@ -1,0 +1,38 @@
+T3 - A base template for THREE.js projects
+=========
+
+Version
+----
+
+0.0.1
+
+TODO
+----
+
+sprites + atlas
+TileMaps
+sound
+physics
+camera
+shaders
+emitters
+multiplayer
+
+Installation
+--------------
+
+```sh
+npm install
+```
+
+Starting the server
+--------------
+
+```sh
+gulp
+```
+
+License
+----
+
+MIT

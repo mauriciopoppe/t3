@@ -1,0 +1,42 @@
+<!doctype html>
+<html>
+<head>
+		<title>T3 Car</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+
+        <link href="css/reset.css" rel="stylesheet"/>
+        <link href="css/main.css" rel="stylesheet"/>
+	</head>
+<body>
+
+    <!-- three.js container -->
+    <div id="webgl-container"></div>
+
+    <!-- external includes -->
+    <script src="lib/dat.gui.min.js"></script>
+    <script src="lib/stats.min.js"></script>
+    <script src="lib/jquery-1.9.1.js"></script>
+    <script src="lib/Extend.js"></script>
+
+    <script src="lib/three.59.min.js"></script>
+    <script src="lib/Detector.js"></script>
+    <script src="lib/Coordinates.js"></script>
+    <script src="lib/THREEx.FullScreen.js"></script>
+    <script src="lib/THREEx.WindowResize.js"></script>
+    <script src="lib/OrbitAndPanControls.js"></script>
+
+    <!-- T3 -->
+    <script src="js/T3.js"></script>
+    <script src="js/Application.js"></script>
+    <script src="js/ObjectManager.js"></script>
+    <script src="js/controller/Keyboard.js"></script>
+    <script src="js/controller/World.js"></script>
+    <script src="js/model/Coordinates.js"></script>
+
+    <script type="text/javascript">
+        T3.Application.launch();
+    </script>
+
+</body>
+</html>
