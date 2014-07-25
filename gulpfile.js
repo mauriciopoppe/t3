@@ -5,10 +5,12 @@ var browserify = require('browserify');
 var source = require('vinyl-source-stream');
 var exec = require('child_process').exec;
 var pkg = require('./package.json');
+var path = require('path');
 
 // gulp extras
 var gulp = require('gulp');
 var git = require('gulp-git');
+var compass = require('gulp-compass');
 var bump = require('gulp-bump');
 var filter = require('gulp-filter');
 var tagVersion = require('gulp-tag-version');
@@ -67,7 +69,14 @@ gulp.task('browserSync', ['build'], function () {
   });
 });
 
-
+gulp.task('compass', function () {
+  gulp.src(['./docs/**/*.scss'])
+    .pipe(compass({
+      // project: path.join(__dirname, 'docs/'),
+      css: './docs/css',
+      sass: './docs/sass'
+    }));
+});
 
 function createTag(type, cb) {
   gulp.src(['./package.json', './bower.json'])
@@ -89,10 +98,11 @@ gulp.task('useWatchify', function () {
 });
 
 gulp.task('watch', ['useWatchify', 'browserSync'], function () {
+  gulp.watch('./docs/**/*.scss', ['compass']);
 });
 
 // main tasks
-gulp.task('build', ['browserify']);
+gulp.task('build', ['browserify', 'compass']);
 
 gulp.task('release.major', function (cb) { createTag('major', cb); });
 gulp.task('release.minor', function (cb) { createTag('minor', cb); });

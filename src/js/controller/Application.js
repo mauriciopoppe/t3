@@ -218,9 +218,13 @@ Application.prototype = {
       gui = new dat.GUI({
         autoPlace: false
       });
-    gui.domElement.style.position  = 'absolute';
-    gui.domElement.style.top  = '0px';
-    gui.domElement.style.right = '0px';    
+
+    _.merge(gui.domElement.style, {
+      position: 'absolute',
+      top: '0px',
+      right: '0px',
+      zIndex: '1'
+    });
     document
       .getElementById(config.id)
       .appendChild(gui.domElement);
@@ -234,8 +238,11 @@ Application.prototype = {
       stats;
     // add Stats.js - https://github.com/mrdoob/stats.js
     stats = new Stats();
-    stats.domElement.style.position  = 'absolute';
-    stats.domElement.style.bottom  = '0px';
+    _.merge(stats.domElement.style, {
+      position: 'absolute',
+      zIndex: 1,
+      bottom: '0px'
+    });
     document
       .getElementById(config.id)
       .appendChild( stats.domElement );

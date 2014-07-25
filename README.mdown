@@ -4,8 +4,8 @@ t3 is a template to build three.js applications without worrying about the commo
 
 Features
 --------
-- Defined with UMD (compatible with CommonJS, AMD or fallback to a global variable)
-- Live reloading through browser-sync
+- Module defined to work anywhere (follows the UMD pattern)
+- Integration with [dat.gui](http://workshop.chromeexperiments.com/examples/gui/) and [Stats](https://github.com/mrdoob/stats.js/)
 - Micro scene handler for your multistaged app/game :)
 - Micro camera manager
 - Keyboard manager utility to catch keyboard events
@@ -15,15 +15,43 @@ Features
 Installation
 ------------
 
-With bower:
+### Bower
 
-```javascript
+Install the package with bower (recommended):
+
+```bash
 bower install t3
 ```
 
-Getting Started
----------------
-Add the file `t3.js` or `t3.min.js` (which can be loaded with the source map to debug the minified file) and create a container for your app (which is required to have an `id`)
+Or save the files in the `dist` folder on you project library (the old way)
+
+### Use with RequireJS
+
+By default bower will install the package on `bower_components/t3`, you might modify your requirejs configuration file adding a path to the source files
+
+```javascript
+requirejs.config({
+  ...
+  paths: {
+    t3: 'path/to/bower_components/dist/t3'		// concatenated script
+    // or
+    t3: 'path/to/bower_components/dist/t3.min'	// minified script
+  }
+  ...
+});
+```
+
+And require it on a module using:
+
+```javascript
+define(['t3'], function (t3) {
+  // module t3 is loaded :)
+});
+```
+
+### Explicitly importing the file on your project
+
+As an alternative if you don't use RequireJS, add the source files (`t3.js` or `t3.min.js` which can be loaded with the source map for debugging purposes) to your page
 
 ```html
 <!DOCTYPE html>
@@ -31,23 +59,43 @@ Add the file `t3.js` or `t3.min.js` (which can be loaded with the source map to 
 <head>
 	<meta charset="UTF-8">
 	<title>t3</title>
+	<script src="path/to/bower_components/dist/t3.min.js"></script>	
 </head>
-<body>
-	<!-- The content will be generated under this element -->
-	<div id="canvas-wrapper" style="position: relative"></div>
-	<script src="lib/three.js"></script>
-	<script src="t3.min.js"></script>
-	<script>
-		t3.Application.run({
-			id: 'canvas-wrapper'
-		});
-	</script>
-</body>
+<!-- ... -->
 </html>
 ```
 
-<iframe src="../examples/01.html" width="800px" height="600px">	
+Getting Started
+---------------
+It's required that you create a container for the application identified with an `id`
+
+```html
+<div id="canvas"></div>	
+```
+
+The minimal example requires only the application's wrapper `id`:
+
+```javascript
+define(['t3'], function (t3) {
+  return t3.Application.run({
+    id: 'canvas'
+  });
+});
+```
+
+These simple scene defines:
+
+- A default scene
+- A default camera with [OrbitControls](https://github.com/mrdoob/three.js/blob/master/examples/js/controls/OrbitControls.js)
+- A world with a grid in the XZ plane (defined in the [Coordinates model](https://github.com/maurizzzio/t3/blob/master/src/js/model/Coordinates.js#L22))
+- A set of axes positioned at the center of the scene
+- An indicator of the current frame rate
+- A dat-gui folder to enable/disable some options
+
+<iframe class="t3-example" src="../examples/?k=01" width="800px" height="400px">
 </iframe>
+[Demo in Full Screen >](../examples/?k=01)
+[Source Code >](http://github.com/maurizzzio/t3/src/examples/scripts/01.js)
 
 `T3.Application` is a function whose instances can control a single element of your app, this means that you can have 
 
