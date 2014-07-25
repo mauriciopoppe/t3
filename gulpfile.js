@@ -10,6 +10,8 @@ var pkg = require('./package.json');
 var gulp = require('gulp');
 var git = require('gulp-git');
 var bump = require('gulp-bump');
+var filter = require('gulp-filter');
+var tagVersion = require('gulp-tag-version');
 var useWatchify;
 
 function run(bundler, minify) {
@@ -65,27 +67,29 @@ gulp.task('browserSync', ['build'], function () {
   });
 });
 
-gulp.task('bump', ['build'], function () {
+
+
+function createTag(type) {
   return gulp.src(['./package.json', './bower.json'])
-    .pipe(bump({
-      // type: 'major'
-      type: 'minor'
-      // type: 'patch'
-    }))
-    .pipe(gulp.dest('./'));
-});
+    .pipe(bump({ type: type }))
+    .pipe(gulp.dest('./'))
+    .pipe(git.commit('bump version'))
+    .pipe(filter('package.json'))
+    .pipe(tagVersion());
+};
 
 gulp.task('tag', ['bump'], function (cb) {
-  var version = pkg.version;
+  var version = require('./package.json').version;
   var message = 'Release ' + version;
-  gulp.src('./')
-    .pipe(git.commit(message));
-  git.tag(version, message);
-  exec('./push.sh', function (err, stdout, stderr) {
-    console.log(stdout);
-    console.log(stderr);
-    cb(err);
-  });
+  console.log(message);
+  // gulp.src('./')
+  //   .pipe(git.commit(message));
+  // git.tag(version, message);
+  // exec('./push.sh', function (err, stdout, stderr) {
+  //   console.log(stdout);
+  //   console.log(stderr);
+  //   cb(err);
+  // });
   // git.push('origin', 'master', {args: '--tags'});
 });
 
@@ -98,5 +102,9 @@ gulp.task('watch', ['useWatchify', 'browserSync'], function () {
 
 // main tasks
 gulp.task('build', ['browserify']);
-gulp.task('release', ['tag']);
+
+gulp.task('release.major', function () { return createTag('major') });
+gulp.task('release.minor', function () { return createTag('minor') });
+gulp.task('release.patch', function () { return createTag('patch') });
+
 gulp.task('default', ['watch']);
