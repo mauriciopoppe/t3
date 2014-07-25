@@ -69,29 +69,20 @@ gulp.task('browserSync', ['build'], function () {
 
 
 
-function createTag(type) {
-  return gulp.src(['./package.json', './bower.json'])
+function createTag(type, cb) {
+  gulp.src(['./package.json', './bower.json'])
     .pipe(bump({ type: type }))
     .pipe(gulp.dest('./'))
     .pipe(git.commit('bump version'))
     .pipe(filter('package.json'))
     .pipe(tagVersion());
-};
 
-gulp.task('tag', ['bump'], function (cb) {
-  var version = require('./package.json').version;
-  var message = 'Release ' + version;
-  console.log(message);
-  // gulp.src('./')
-  //   .pipe(git.commit(message));
-  // git.tag(version, message);
-  // exec('./push.sh', function (err, stdout, stderr) {
-  //   console.log(stdout);
-  //   console.log(stderr);
-  //   cb(err);
-  // });
-  // git.push('origin', 'master', {args: '--tags'});
-});
+  exec('./push.sh', function (err, stdout, stderr) {
+    console.log(stdout);
+    console.log(stderr);
+    cb(err);
+  });
+}
 
 gulp.task('useWatchify', function () {
   useWatchify = true;
@@ -103,8 +94,8 @@ gulp.task('watch', ['useWatchify', 'browserSync'], function () {
 // main tasks
 gulp.task('build', ['browserify']);
 
-gulp.task('release.major', function () { return createTag('major') });
-gulp.task('release.minor', function () { return createTag('minor') });
-gulp.task('release.patch', function () { return createTag('patch') });
+gulp.task('release.major', function (cb) { createTag('major', cb); });
+gulp.task('release.minor', function (cb) { createTag('minor', cb); });
+gulp.task('release.patch', function (cb) { createTag('patch', cb); });
 
 gulp.task('default', ['watch']);
