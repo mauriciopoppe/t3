@@ -90,7 +90,7 @@ define(['t3'], function (t3) {
 </iframe>
 
 [Demo in Full Screen >](../examples/?k=01)
-[Source Code >](http://github.com/maurizzzio/t3/src/examples/scripts/01.js)
+[Source Code >](http://github.com/maurizzzio/t3/blob/master/examples/scripts/01.js)
 
 This basic "world" has:
 
@@ -152,7 +152,7 @@ define(['t3'], function (t3) {
 </iframe>
 
 [Demo in Full Screen >](../examples/?k=02)
-[Source Code >](http://github.com/maurizzzio/t3/src/examples/scripts/02.js)
+[Source Code >](http://github.com/maurizzzio/t3/blob/master/examples/scripts/02.js)
 
 ### Delaying the game loop
 
@@ -198,7 +198,7 @@ instance.loopManager[paused ? 'start' : 'stop']();
 ```
 
 [Demo in Full Screen >](../examples/?k=03)
-[Source Code >](http://github.com/maurizzzio/t3/src/examples/scripts/03.js)
+[Source Code >](http://github.com/maurizzzio/t3/blob/master/examples/scripts/03.js)
 
 ### Disabling some objects in the default scene
 There are 5 groups on the default scene:
@@ -243,7 +243,7 @@ define(['t3'], function (t3) {
 </iframe>
 
 [Demo in Full Screen >](../examples/?k=04)
-[Source Code >](http://github.com/maurizzzio/t3/src/examples/scripts/04.js)
+[Source Code >](http://github.com/maurizzzio/t3/blob/master/examples/scripts/04.js)
 
 ### Changing Scenes
 
@@ -314,7 +314,7 @@ instance.setActiveScene(scenes[current]);
 ```
 
 [Demo in Full Screen >](../examples/?k=05)
-[Source Code >](http://github.com/maurizzzio/t3/src/examples/scripts/05.js)
+[Source Code >](http://github.com/maurizzzio/t3/blob/master/examples/scripts/05.js)
 
 
 ### Changing Cameras
@@ -384,7 +384,7 @@ instance.setActiveCamera(cameras[current]);
 ```
 
 [Demo in Full Screen >](../examples/?k=06)
-[Source Code >](http://github.com/maurizzzio/t3/src/examples/scripts/06.js)
+[Source Code >](http://github.com/maurizzzio/t3/blob/master/examples/scripts/06.js)
 
 ### Themes
 
@@ -415,7 +415,7 @@ define(['t3'], function (t3) {
 </iframe>
 
 [Demo in Full Screen >](../examples/?k=07)
-[Source Code >](http://github.com/maurizzzio/t3/src/examples/scripts/07.js)
+[Source Code >](http://github.com/maurizzzio/t3/blob/master/examples/scripts/07.js)
 
 ### Caching objects
 
@@ -457,7 +457,7 @@ define(['t3'], function (t3) {
 </iframe>
 
 [Demo in Full Screen >](../examples/?k=08)
-[Source Code >](http://github.com/maurizzzio/t3/src/examples/scripts/08.js)
+[Source Code >](http://github.com/maurizzzio/t3/blob/master/examples/scripts/08.js)
 
 ### Adding custom functionality by extending t3.Application
 
