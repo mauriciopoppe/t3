@@ -11,6 +11,8 @@ var path = require('path');
 var gulp = require('gulp');
 var git = require('gulp-git');
 var compass = require('gulp-compass');
+var concat = require('gulp-concat');
+var jsdoc = require('gulp-jsdoc');
 var bump = require('gulp-bump');
 var filter = require('gulp-filter');
 var tagVersion = require('gulp-tag-version');
@@ -41,7 +43,7 @@ gulp.task('browserify', function () {
   var method = useWatchify ? watchify : browserify;
 
   var bundler = method({
-    entries: ['./src/js/index.js'],
+    entries: ['./src/index.js'],
     extensions: ['js']
   });
 
@@ -61,12 +63,17 @@ gulp.task('browserify', function () {
   return bundle();
 });
 
-gulp.task('browserSync', ['build'], function () {
+gulp.task('browserSync', ['browserify'], function () {
   browserSync.init(['./examples/**/*'], {
     server: {
       baseDir: '.'
     }
   });
+});
+
+gulp.task('docs', function(){
+  return gulp.src('./src/**/*.js')
+    .pipe(jsdoc('./docs/api'));
 });
 
 gulp.task('compass', function () {
@@ -102,7 +109,7 @@ gulp.task('watch', ['useWatchify', 'browserSync'], function () {
 });
 
 // main tasks
-gulp.task('build', ['browserify', 'compass']);
+gulp.task('build', ['browserify', 'compass', 'docs']);
 
 gulp.task('release.major', function (cb) { createTag('major', cb); });
 gulp.task('release.minor', function (cb) { createTag('minor', cb); });

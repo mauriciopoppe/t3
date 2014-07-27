@@ -22,14 +22,22 @@
   <meta content="T3" property="og:title">
   <meta content="T3 - THREE.js boilerplate" name="description">
 
-  <!-- Initializer -->
+  <!-- init -->
   <script>
-    Flatdoc.run({
-      fetcher: Flatdoc.file('../README.mdown')
+    $(function () {
+      var s = location.search.slice(1).split('&');
+      var params = {};
+      s.forEach(function (v) {
+        var kv = v.split('=');
+        params[kv[0]] = kv[1];
+      });
+      Flatdoc.run({
+        fetcher: Flatdoc.file(params.location || '../README.mdown')
+      });
     });
   </script>
 </head>
-<body role='flatdoc'>
+<body class='large-brief' role='flatdoc'>
 
   <div class='header'>
     <div class='left'>
@@ -37,6 +45,8 @@
       <ul>
         <li><a href='https://github.com/maurizzzio/T3'>View on GitHub</a></li>
         <li><a href='https://github.com/maurizzzio/T3/issues'>Issues</a></li>
+        <li><a href=''>README</a></li>
+        <li><a href='api'>API</a></li>
       </ul>
     </div>
     <div class='right'>
@@ -51,6 +61,48 @@
     </div>
     <div role='flatdoc-content' class='content'></div>
   </div>
+
+  <script>
+      $('[role~="flatdoc"]').on('flatdoc:ready', function () {
+        function getExample(id, fn) {
+          var innerFrame = document.querySelector('#t3' + id).contentWindow;
+          innerFrame.requirejs([id], function (instance) {
+            fn(instance);
+          })
+        }
+
+        // example 03
+        $('#tp03').click(function (e) {
+          getExample('03', function (instance) {
+            var paused = instance.loopManager.pause;
+            console.log(instance);
+            instance.loopManager[paused ? 'start' : 'stop']();
+          });
+        });
+
+        // example 05
+        var cs = 0;        
+        $('#tp05').click(function (e) {
+          getExample('05', function (instance) {
+            var scenes = ['default', 'cone', 'sphere'];
+            cs = cs + 1;
+            cs %= scenes.length;
+            instance.setActiveScene(scenes[cs]);
+          });
+        });
+
+        // example 06
+        var cc = 0;
+        $('#tp06').click(function (e) {
+          getExample('06', function (instance) {
+            var cameras = ['default', 'origin', 'orthographic'];
+            cc = cc + 1;
+            cc %= cameras.length;
+            instance.setActiveCamera(cameras[cc]);
+          });
+        });
+      });
+  </script>
 
 </body>
 </html>

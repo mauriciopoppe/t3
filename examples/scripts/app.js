@@ -1,7 +1,8 @@
 requirejs.config({
   baseUrl: 'scripts',
   paths: {
-    t3: '../dist/t3'
+    t3: '../dist/t3',
+    three: '../lib/three'
   }
 });
 
@@ -13,8 +14,5 @@ requirejs.config({
       var kv = v.split('=');
       params[kv[0]] = kv[1];
     });
-
-  requirejs([params.k], function (instance) {
-    console.log(instance);
-  });
+  requirejs([params.k], function () { });
 })();
