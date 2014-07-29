@@ -24,7 +24,7 @@ Install the package with bower (recommended):
 bower install t3
 ```
 
-Or save the files in the `dist` folder on you project library (the old way)
+Or save the `dist/` files on you project library (the old way)
 
 ### Use with RequireJS
 
@@ -96,7 +96,7 @@ This basic "world" has:
 
 - A default scene
 - A default camera with [OrbitControls](https://github.com/mrdoob/three.js/blob/master/examples/js/controls/OrbitControls.js)
-- A world with a grid in the XZ plane (defined in the [Coordinates model](https://github.com/maurizzzio/t3/blob/master/src/model/Coordinates.js#L22))
+- A a grid in the XZ plane (defined in the [Coordinates model](https://github.com/maurizzzio/t3/blob/master/src/model/Coordinates.js#L22))
 - A set of axes positioned at the center of the scene ([Source](https://github.com/maurizzzio/t3/blob/master/src/model/Coordinates.js#L10))
 - A dat-gui folder to enable/disable some options ([Source](https://github.com/maurizzzio/t3/blob/master/src/controller/LoopManager.js#L36-38))
  - A gui control for the visibility of the axes, ground and grids ([Source](https://github.com/maurizzzio/t3/blob/master/src/model/Coordinates.js#L58-67))
@@ -113,9 +113,9 @@ The `init` method is called after `t3.Application`'s constructor has been called
 - **scenes**: a pool of scenes
 - **activeScene**: the current scene which is by default `this.scenes.default`
 - **cameras**: a pool of cameras
-- **currentCamera**: the current camera which is a perspective camera with Orbit controls
-- **renderer**: a reference to an instance of **THREE.WebGL** renderer
-- **keyboard**: a reference to the keyboard instance
+- **currentCamera**: the current camera which is a perspective camera with Orbit controls and by default is `this.scenes.default`
+- **renderer**: a reference to an instance of **THREE.WebGLRenderer**
+- **keyboard**: a reference to the keyboard instance (a utility to store keyboard events)
 - **datgui**: a reference to an instance of **dat.gui**
 - **loopManager**: this instance controls the application frame rate and paused state
 - **theme**: the theme of the application
@@ -125,7 +125,7 @@ The `update` method is called from `this.loopManager` and receives the time elap
 
 ### A rotating cube
 
-We're used to create an object and add it to the scene, well, now the scene is `this.currentScene` and the object has to be added to it:
+We're used to create an object and add it to the scene, well, now the scene is `this.activeScene` and the object has to be added to it:
 
 ```javascript
 define(['t3'], function (t3) {
@@ -156,7 +156,7 @@ define(['t3'], function (t3) {
 
 ### Delaying the game loop
 
-Perhaps we might need to call the game loop at a later time, to do so we can pass the option `renderImmediately: false`
+Perhaps we might need to call the game loop at a later time, to do so we can add the option `renderImmediately: false`
 
 ```html
 define(['t3'], function (t3) {
@@ -319,7 +319,7 @@ instance.setActiveScene(scenes[current]);
 
 ### Changing Cameras
 
-Since the application has a pool of cameras, adding more cameras is as easy as registering it with a name just like the changing the scene:
+Since the application has a pool of cameras, adding more cameras is as easy as registering it with a name just like changing scenes:
 
 ```javascript
 define(['t3'], function (t3) {
@@ -349,7 +349,7 @@ define(['t3'], function (t3) {
       camera.lookAt(new THREE.Vector3(100, 100, 100));
       this
         .addCamera(camera, 'orthographic')
-        // adds orbit controls to the camera
+        // add orbit controls to the camera
         .createCameraControls(camera);
 
       var geometry = new THREE.BoxGeometry(20, 20, 20);
@@ -419,7 +419,7 @@ define(['t3'], function (t3) {
 
 ### Caching objects
 
-Another useful utility that the template has is the possibility of caching elements under a name, `three.js` is able to look up for a child using a recursive search, the template extends this functionality and makes it possible to save the last added/removed object from any instance of `THREE.Object3D` and additionally it makes it possible to call the injected method `cache` to cache the object:
+Another useful utility that the template has is the possibility of caching elements, `three.js` defines the field `name` for any `THREE.Object3D` which allows to make lookups ([Source](https://github.com/mrdoob/three.js/blob/master/src/core/Object3D.js#L457-485)), the template extends this functionality and makes it possible to save the last added/removed object from any instance of `THREE.Object3D` ([Source](https://github.com/maurizzzio/t3/blob/master/src/controller/Application.js#L559-599))
 
 ```javascript
 define(['t3'], function (t3) {
@@ -432,8 +432,8 @@ define(['t3'], function (t3) {
       var cube = new THREE.Mesh(geometry, material);
       cube.position.set(100, 100, 100);
       // since THREE.Object3D.prototype was injected with the method
-      // `cache` we can call it to save the object under this
-      // instance's `__t3cache__`
+      // `cache` we can call it to save the last added/removed object
+      // under `this.__t3cache__` passing a name
       this.activeScene
         .add(cube)
         // unique identifier = cube
@@ -461,7 +461,7 @@ define(['t3'], function (t3) {
 
 ### Adding custom functionality by extending t3.Application
 
-`t3.Application.run` creates in fact a subclass of `t3.Application` allowing an application to be quickly started, you can the functionality of the `t3.Application` by creating a subclass just like `t3.Application.run` does:
+`t3.Application.run` creates in fact a subclass of `t3.Application` allowing an application to be quickly started, you can extend the functionality of the `t3.Application` class by creating a subclass:
 
 ```javascript
 Application.run = function (options) {
@@ -487,7 +487,7 @@ Application.run = function (options) {
 ```
 
 ### TODO: Animate on mouseover
-
+### TODO: Add sole's tween engine
 Acknowledgments
 --------
 

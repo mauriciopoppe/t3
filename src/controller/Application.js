@@ -465,7 +465,7 @@ Application.prototype.initCoordinates = function () {
  */
 Application.prototype.initKeyboard = function () {
   this.keyboard = new Keyboard();
-  return this
+  return this;
 };
 
 /**
