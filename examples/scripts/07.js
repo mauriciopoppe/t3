@@ -1,5 +1,5 @@
 define(['t3'], function (t3) {
-  return t3.Application.run({
+  return t3.run({
     id: 'canvas',
     theme: 'light',    
     init: function () {

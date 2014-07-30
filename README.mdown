@@ -80,7 +80,7 @@ The minimal example requires only the application's wrapper `id`:
 
 ```javascript
 define(['t3'], function (t3) {
-  return t3.Application.run({
+  return t3.run({
     id: 'canvas'
   });
 });
@@ -106,9 +106,9 @@ This basic "world" has:
 ### Init & Update
 
 Additionally we can set the `init` and `update` methods in the object passed to
-`t3.Application.run`.
+`t3.run`.
 
-The `init` method is called after `t3.Application`'s constructor has been called, within this method `this` has the following properties:
+The `init` method is called after `t3`'s constructor has been called, within this method `this` has the following properties:
 
 - **scenes**: a pool of scenes
 - **activeScene**: the current scene which is by default `this.scenes.default`
@@ -129,7 +129,7 @@ We're used to create an object and add it to the scene, well, now the scene is `
 
 ```javascript
 define(['t3'], function (t3) {
-  return t3.Application.run({
+  return t3.run({
     id: 'canvas',
     init: function () {
       var geometry = new THREE.BoxGeometry(20, 20, 20);
@@ -160,7 +160,7 @@ Perhaps we might need to call the game loop at a later time, to do so we can add
 
 ```html
 define(['t3'], function (t3) {
-  var instance = t3.Application.run({
+  var instance = t3.run({
     id: 'canvas',
     renderImmediately: false,
     init: function () {
@@ -180,7 +180,7 @@ define(['t3'], function (t3) {
 });
 ```
 
-To make it renderable again at some point call `instance.loopManager.start()` where the instance is the value returned from calling `t3.Application.run`
+To make it renderable again at some point call `instance.loopManager.start()` where the instance is the value returned from calling `t3.run`
 
 <iframe id="t303" class="t3-example" src="../examples/?k=03">
 </iframe>
@@ -192,7 +192,7 @@ To make it renderable again at some point call `instance.loopManager.start()` wh
 Code for the toggle example:
 
 ```javascript
-// instance is the value returned from calling `t3.Application.run`
+// instance is the value returned from calling `t3.run`
 var paused = instance.loopManager.pause;
 instance.loopManager[paused ? 'start' : 'stop']();
 ```
@@ -213,7 +213,7 @@ The visibility of these elements can be defined in the `ambientConfig` option
 
 ```javascript
 define(['t3'], function (t3) {
-  return t3.Application.run({
+  return t3.run({
     id: 'canvas',
     ambientConfig: {
       axes: false,
@@ -251,7 +251,7 @@ Since the application has a pool of scenes, we can create as many scenes as we w
 
 ```javascript
 define(['t3'], function (t3) {
-  return t3.Application.run({
+  return t3.run({
     id: 'canvas',
     init: function () {
       var scene,
@@ -323,7 +323,7 @@ Since the application has a pool of cameras, adding more cameras is as easy as r
 
 ```javascript
 define(['t3'], function (t3) {
-  return t3.Application.run({
+  return t3.run({
     id: 'canvas',
     init: function () {
       var camera,
@@ -392,7 +392,7 @@ If you don't like the dark theme you can switch to the light theme on the defaul
 
 ```javascript
 define(['t3'], function (t3) {
-  return t3.Application.run({
+  return t3.run({
     id: 'canvas',
     theme: 'light',    
     init: function () {
@@ -423,7 +423,7 @@ Another useful utility that the template has is the possibility of caching eleme
 
 ```javascript
 define(['t3'], function (t3) {
-  return t3.Application.run({
+  return t3.run({
     id: 'canvas',
     injectCache: true,
     init: function () {
@@ -461,7 +461,7 @@ define(['t3'], function (t3) {
 
 ### Adding custom functionality by extending t3.Application
 
-`t3.Application.run` creates in fact a subclass of `t3.Application` allowing an application to be quickly started, you can extend the functionality of the `t3.Application` class by creating a subclass:
+`t3.run` creates in fact a subclass of `t3.Application` allowing an application to be quickly started, you can extend the functionality of the `t3.Application` class by creating a subclass:
 
 ```javascript
 Application.run = function (options) {
@@ -486,16 +486,30 @@ Application.run = function (options) {
 };
 ```
 
-### TODO: Animate on mouseover
-### TODO: Add sole's tween engine
+### TODO list
+
+- Render only on mouseover
+- Add sole's tween engine to the bundle
+- Add pojoviz example
+
+Changelog
+--------
+1.0.1
+  
+  Fixed some typos in the documentation
+  `t3.run` is now an alias for `t3.Application.run`
+
 Acknowledgments
 --------
 
-This project wouldn't have been possible without the help from the following libraries
+Special thanks to [@mrdoob](https://twitter.com/mrdoob) the author of [three.js](http://threejs.org/)
+
+Also this project wouldn't have been possible without the help from the following libraries:
 
 - [Browserify](http://browserify.org/)
 - [Gulp](http://gulpjs.com/)
 - [THREEx](http://www.threejsgames.com/extensions/)
-- [Udacity's Interactive 3D graphics course](https://www.udacity.com/course/cs291)
 - [Flatdoc](http://ricostacruz.com/flatdoc/)
 - [JSDoc](http://usejsdoc.org)
+
+Last but not least, thanks to Udacity and their awesome [Interactive 3D graphics course](https://www.udacity.com/course/cs291), you should definitely check out their courses :)
