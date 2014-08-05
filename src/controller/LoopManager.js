@@ -14,7 +14,7 @@ var Application = require('./Application');
  * @param {boolean} renderImmediately True to start the call
  * to request animation frame immediately
  */
-var LoopManager = function (application, renderImmediately) {
+function LoopManager(application, renderImmediately) {
   /**
    * Reference to the application
    * @type {controller/Application}

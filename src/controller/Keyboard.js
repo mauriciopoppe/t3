@@ -6,7 +6,7 @@
  * Keyboard helper
  * @class
  */
-var Keyboard = function () {
+function Keyboard() {
   /**
    * Each index correspond to the ascii value of the
    * key pressed

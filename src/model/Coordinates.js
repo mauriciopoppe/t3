@@ -12,7 +12,7 @@ var THREE = require('THREE');
  * @param {Object} config
  * @param {Object} theme
  */
-var Coordinates = function (config, theme) {
+function Coordinates(config, theme) {
   config = config || {};
 
   /**

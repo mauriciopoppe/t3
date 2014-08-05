@@ -112,6 +112,8 @@ gulp.task('watch', ['useWatchify', 'browserSync'], function () {
 // main tasks
 gulp.task('build', ['browserify', 'compass', 'docs']);
 
+gulp.task('dist', ['browserify']);
+
 gulp.task('release.major', function (cb) { createTag('major', cb); });
 gulp.task('release.minor', function (cb) { createTag('minor', cb); });
 gulp.task('release.patch', function (cb) { createTag('patch', cb); });

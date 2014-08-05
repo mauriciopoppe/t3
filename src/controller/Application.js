@@ -48,7 +48,7 @@ var THREEx = require('../lib/THREEx/');
  * @param {object} [config.defaultSceneConfig={}] Additional config
  * for the default scene created for this world
  */
-var Application = function (config) {
+function Application(config) {
   config = _.merge({
     id: null,
     width: window.innerWidth,
