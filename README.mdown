@@ -585,7 +585,7 @@ Changelog
 0.1.2
 
 ```plain
-Fixed some broken links ([mscdex](https://github.com/mscdex))
+Fixed some broken links [thanks to mscdex]
 Additional instructions for development
 Custom themes
 ```
