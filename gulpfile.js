@@ -48,12 +48,13 @@ gulp.task('browserify', function () {
   });
 
   var bundle = function () {
-    if (!useWatchify) {
+    if (useWatchify) {
+      // concat
+      return run(bundler);
+    } else {
       // concat + min
-      run(bundler, true);
+      return run(bundler, true);
     }
-    // concat
-    return run(bundler);
   };
 
   if (useWatchify) {

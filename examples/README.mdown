@@ -1,0 +1,7 @@
+# Running the examples
+
+Open index.html in your preferred browser and pass the following parameter which is the key of the example to see, e.g.:
+
+```
+?k=01
+```
