@@ -582,7 +582,7 @@ src
 
 Changelog
 ---------
-1.0.2
+0.1.2
 
 ```plain
 Fixed some broken links ([mscdex](https://github.com/mscdex))
@@ -590,7 +590,7 @@ Additional instructions for development
 Custom themes
 ```
 
-1.0.1
+0.1.1
 
 ```plain
 Fixed some typos in the documentation
