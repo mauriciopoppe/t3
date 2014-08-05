@@ -1,6 +1,6 @@
 t3
 ===
-t3 is a template to build three.js applications without worrying about the common set up process and allowing multiple applications per page, this project is inspired by [Jeromme's three.js boilerplate](https://github.com/jeromeetienne/threejsboilerplate)
+t3 is a template to build [three.js](threejs.org) applications without worrying about the common set up process and allowing multiple applications per page, this project is inspired by [Jeromme's three.js boilerplate](https://github.com/jeromeetienne/threejsboilerplate)
 
 Features
 --------
@@ -11,7 +11,6 @@ Features
 - Keyboard manager utility to catch keyboard events
 - Themes for the default scene
 - Frame rate control
-- Object caching
 
 Installation
 ------------
@@ -89,7 +88,7 @@ define(['t3'], function (t3) {
 <iframe class="t3-example" src="../examples/?k=01">
 </iframe>
 
-[Demo in Full Screen >](../examples/?k=01)
+[Fullscreen >](http://maurizzzio.github.io/t3/examples/?k=01)
 [Source Code >](http://github.com/maurizzzio/t3/blob/master/examples/scripts/01.js)
 
 This basic "world" has:
@@ -105,15 +104,14 @@ This basic "world" has:
  
 ### Init & Update
 
-Additionally we can set the `init` and `update` methods in the object passed to
-`t3.run`.
+Let's introduce the `init` and `update` methods in the object passed to `t3.run`.
 
 The `init` method is called after `t3`'s constructor has been called, within this method `this` has the following properties:
 
 - **scenes**: a pool of scenes
 - **activeScene**: the current scene which is by default `this.scenes.default`
 - **cameras**: a pool of cameras
-- **currentCamera**: the current camera which is a perspective camera with Orbit controls and by default is `this.scenes.default`
+- **currentCamera**: the current camera which is a perspective camera with Orbit controls and by default is `this.cameras.default`
 - **renderer**: a reference to an instance of **THREE.WebGLRenderer**
 - **keyboard**: a reference to the keyboard instance (a utility to store keyboard events)
 - **datgui**: a reference to an instance of **dat.gui**
@@ -151,14 +149,14 @@ define(['t3'], function (t3) {
 <iframe class="t3-example" src="../examples/?k=02">
 </iframe>
 
-[Demo in Full Screen >](../examples/?k=02)
+[Fullscreen >](http://maurizzzio.github.io/t3/examples/?k=02)
 [Source Code >](http://github.com/maurizzzio/t3/blob/master/examples/scripts/02.js)
 
 ### Delaying the game loop
 
 Perhaps we might need to call the game loop at a later time, to do so we can add the option `renderImmediately: false`
 
-```html
+```javascript
 define(['t3'], function (t3) {
   var instance = t3.run({
     id: 'canvas',
@@ -197,7 +195,7 @@ var paused = instance.loopManager.pause;
 instance.loopManager[paused ? 'start' : 'stop']();
 ```
 
-[Demo in Full Screen >](../examples/?k=03)
+[Fullscreen >](http://maurizzzio.github.io/t3/examples/?k=03)
 [Source Code >](http://github.com/maurizzzio/t3/blob/master/examples/scripts/03.js)
 
 ### Disabling some objects in the default scene
@@ -242,7 +240,7 @@ define(['t3'], function (t3) {
 <iframe id="t304" class="t3-example" src="../examples/?k=04">
 </iframe>
 
-[Demo in Full Screen >](../examples/?k=04)
+[Fullscreen >](http://maurizzzio.github.io/t3/examples/?k=04)
 [Source Code >](http://github.com/maurizzzio/t3/blob/master/examples/scripts/04.js)
 
 ### Changing Scenes
@@ -313,7 +311,7 @@ current %= scenes.length;
 instance.setActiveScene(scenes[current]);
 ```
 
-[Demo in Full Screen >](../examples/?k=05)
+[Fullscreen >](http://maurizzzio.github.io/t3/examples/?k=05)
 [Source Code >](http://github.com/maurizzzio/t3/blob/master/examples/scripts/05.js)
 
 
@@ -383,7 +381,7 @@ current %= cameras.length;
 instance.setActiveCamera(cameras[current]);
 ```
 
-[Demo in Full Screen >](../examples/?k=06)
+[Fullscreen >](http://maurizzzio.github.io/t3/examples/?k=06)
 [Source Code >](http://github.com/maurizzzio/t3/blob/master/examples/scripts/06.js)
 
 ### Themes
@@ -414,12 +412,54 @@ define(['t3'], function (t3) {
 <iframe id="t307" class="t3-example" src="../examples/?k=07">
 </iframe>
 
-[Demo in Full Screen >](../examples/?k=07)
+[Fullscreen >](http://maurizzzio.github.io/t3/examples/?k=07)
 [Source Code >](http://github.com/maurizzzio/t3/blob/master/examples/scripts/07.js)
+
+Wanna roll your own? Just add an object to the object `t3.themes` and you're done!
+
+```javascript
+define(['t3'], function (t3) {
+
+  t3.themes.sandyStone = {
+    clearColor: 0xE6E2AF,
+    fogColor: 0xE6E2AF,
+    groundColor: 0xA7A37E
+  };
+
+  return t3.run({
+    id: 'canvas',
+    theme: 'sandyStone',
+    init: function () {
+      var geometry = new THREE.BoxGeometry(20, 20, 20);
+      var material = new THREE.MeshNormalMaterial();
+      this.cube = new THREE.Mesh(geometry, material);
+      this.cube.position.set(100, 100, 100);
+      this.activeScene
+        .add(this.cube);
+    },
+    update: function (delta) {
+      this.cube.rotation.x += 0.01;
+      this.cube.rotation.y += 0.01;
+    }
+  });
+});
+```
+
+The available configuration options are:
+
+- clearColor (used in the `THREE.WebGLRenderer` instance)
+- fogColor (used in the `THREE.Fog` instance)
+- groundColor (ground color of the helper)
+
+<iframe id="t3071" class="t3-example" src="../examples/?k=071">
+</iframe>
+
+[Fullscreen >](http://maurizzzio.github.io/t3/examples/?k=071)
+[Source Code >](http://github.com/maurizzzio/t3/blob/master/examples/scripts/071.js)
 
 ### Caching objects
 
-Another useful utility that the template has is the possibility of caching elements, `three.js` defines the field `name` for any `THREE.Object3D` which allows to make lookups ([Source](https://github.com/mrdoob/three.js/blob/master/src/core/Object3D.js#L457-485)), the template extends this functionality and makes it possible to save the last added/removed object from any instance of `THREE.Object3D` ([Source](https://github.com/maurizzzio/t3/blob/master/src/controller/Application.js#L559-599))
+Another useful utility that the template has is the possibility of caching elements, `three.js` defines the field `name` for any `THREE.Object3D` which allows to make lookups ([Source](https://github.com/mrdoob/three.js/blob/master/src/core/Object3D.js#L457-485)), the template extends this functionality and makes it possible to save the last added/removed object from any instance of `THREE.Object3D` ([Source](https://github.com/maurizzzio/t3/blob/master/src/controller/Application.js#L556-596))
 
 ```javascript
 define(['t3'], function (t3) {
@@ -456,7 +496,7 @@ define(['t3'], function (t3) {
 <iframe id="t308" class="t3-example" src="../examples/?k=08">
 </iframe>
 
-[Demo in Full Screen >](../examples/?k=08)
+[Fullscreen >](http://maurizzzio.github.io/t3/examples/?k=08)
 [Source Code >](http://github.com/maurizzzio/t3/blob/master/examples/scripts/08.js)
 
 ### Adding custom functionality by extending t3.Application
@@ -489,15 +529,73 @@ Application.run = function (options) {
 ### TODO list
 
 - Render only on mouseover
+- Pause if not visible
 - Add sole's tween engine to the bundle
 - Add pojoviz example
 
+Development
+-----------
+After cloning the repo install the required node dependencies with:
+
+```javascript
+npm install
+```
+
+Generate the bundle with:
+
+```javascript
+gulp
+```
+
+This will generate an unminified file since it creates the bundle with [watchify](https://github.com/substack/watchify), if you want to build the minified file including its source map execute:
+
+```javascript
+gulp build
+```
+
+Project structure
+-----------------
+Generated by [tree](http://mama.indstate.edu/users/ice/tree/):
+```
+src
+├── controller
+│   ├── Application.js
+│   ├── Keyboard.js
+│   └── LoopManager.js
+├── index.js
+├── lib
+│   ├── OrbitControls.js
+│   ├── THREEx
+│   │   ├── FullScreen.js
+│   │   ├── WindowResize.js
+│   │   └── index.js
+│   ├── dat.gui.min.js
+│   └── stats.min.js
+├── model
+│   └── Coordinates.js
+└── themes
+    ├── dark.js
+    └── light.js
+
+5 directories, 13 files
+```
+
 Changelog
---------
+---------
+1.0.2
+
+```plain
+Fixed some broken links ([mscdex](https://github.com/mscdex))
+Additional instructions for development
+Custom themes
+```
+
 1.0.1
-  
-  Fixed some typos in the documentation
-  `t3.run` is now an alias for `t3.Application.run`
+
+```plain
+Fixed some typos in the documentation
+`t3.run` is now an alias for `t3.Application.run`
+```
 
 Acknowledgments
 --------

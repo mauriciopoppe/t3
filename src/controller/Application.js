@@ -11,10 +11,6 @@ var Stats = require('T3.Stats');
 var dat = require('T3.dat');
 var THREE = require('THREE');
 var THREEx = require('../lib/THREEx/');
-var themes = {
-  dark: require('../themes/dark'),
-  light: require('../themes/light')
-};
 /**
  * @module controller/Application
  */
@@ -238,7 +234,7 @@ Application.prototype.createDefaultRenderer = function () {
   var renderer = new THREE.WebGLRenderer({
 //      antialias: true
   });
-  renderer.setClearColor(me.theme.clearColor, 1 );
+  renderer.setClearColor(me.theme.clearColor, 1);
   renderer.setSize(config.width, config.height);
   document
     .getElementById(config.id)
@@ -345,7 +341,8 @@ Application.prototype.createDefaultLights = function () {
  * @return {this}
  */
 Application.prototype.setTheme = function (name) {
-  var me = this;
+  var me = this,
+    themes = require('../').themes;
   assert(themes[name]);
   me.theme = themes[name];
   return me;
