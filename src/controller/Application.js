@@ -20,7 +20,7 @@ var THREEx = require('../lib/THREEx/');
  * the canvas for the three.js app it creates a dat.gui instance
  * (to control objects of the app with a gui) and a Stats instance
  * (to view the current framerate)
- * 
+ *
  * @class
  * @param {Object} config An object containing the following:
  * @param {string} [config.id=null] The id of the DOM element to inject the elements to
@@ -29,11 +29,11 @@ var THREEx = require('../lib/THREEx/');
  * @param {number} [config.height=window.innerHeight]
  * The height of the canvas
  * @param {boolean} [config.renderImmediately=true]
- * False to disable the game loop when the application starts, if 
+ * False to disable the game loop when the application starts, if
  * you want to resume the loop call `application.loopManager.start()`
  * @param {boolean} [config.injectCache=false]
  * True to add a wrapper over `THREE.Object3D.prototype.add` and
- * `THREE.Object3D.prototype.remove` so that it catches the last element 
+ * `THREE.Object3D.prototype.remove` so that it catches the last element
  * and perform additional operations over it, with this mechanism
  * we allow the application to have an internal cache of the elements of
  * the application
@@ -121,7 +121,7 @@ function Application(config) {
    * @type {LoopManager}
    */
   this.loopManager = null;
-  
+
   /**
    * Colors for the default scene
    * @type {Object}
@@ -154,7 +154,7 @@ Application.prototype.getConfig = function () {
  * - Initializes dat.gui, Stats, a mask when the application is paised
  * - Initializes fullScreen events, keyboard and some helper objects
  * - Calls the game loop
- * 
+ *
  */
 Application.prototype.initApplication = function () {
   var me = this,
@@ -249,7 +249,7 @@ Application.prototype.setActiveCamera = function (key) {
 };
 
 Application.prototype.addCamera = function (camera, key) {
-  console.assert(camera instanceof THREE.PerspectiveCamera || 
+  console.assert(camera instanceof THREE.PerspectiveCamera ||
     camera instanceof THREE.OrthographicCamera);
   this.cameras[key] = camera;
   return this;
@@ -364,7 +364,7 @@ Application.prototype.initMask = function () {
   mask.style.top = '0px';
   mask.style.width = '100%';
   mask.style.height = '100%';
-  mask.style.background = 'rgba(0,0,0,0.5)';    
+  mask.style.background = 'rgba(0,0,0,0.5)';
 
   document
     .getElementById(config.id)
@@ -384,7 +384,7 @@ Application.prototype.maskVisible = function (v) {
 };
 
 /**
- * Inits the dat.gui helper which is placed under the 
+ * Inits the dat.gui helper which is placed under the
  * DOM element identified by the initial configuration id
  * @return {this}
  */
@@ -409,7 +409,7 @@ Application.prototype.initDatGui = function () {
 };
 
 /**
- * Init the Stats helper which is placed under the 
+ * Init the Stats helper which is placed under the
  * DOM element identified by the initial configuration id
  * @return {this}
  */
@@ -482,7 +482,7 @@ Application.prototype.gameLoop = function () {
  *
  * - The stats helper
  * - The camera controls if the active camera has one
- * 
+ *
  * @param {number} delta The number of seconds elapsed
  */
 Application.prototype.update = function (delta) {
@@ -522,15 +522,15 @@ Application.prototype.render = function () {
  *     init: function () {
  *       var group = new THREE.Object3D();
  *       var innerGroup = new THREE.Object3D();
- *       
+ *
  *       var geometry = new THREE.BoxGeometry(1,1,1);
  *       var material = new THREE.MeshBasicMaterial({color: 0x00ff00});
  *       var cube = new THREE.Mesh(geometry, material);
- *       
+ *
  *       innerGroup
  *         .add(cube)
  *         .cache('myCube');
- * 
+ *
  *       group
  *         .add(innerGroup)
  *         .cache('innerGroup');
@@ -550,7 +550,7 @@ Application.prototype.render = function () {
  *       // perform operations on the cube
  *     }
  *   });
- *   
+ *
  * @param  {boolean} inject True to enable this behavior
  */
 Application.prototype.injectCache = function (inject) {
@@ -596,7 +596,7 @@ Application.prototype.injectCache = function (inject) {
 };
 
 /**
- * Gets an object from the cache if `injectCache` was enabled and 
+ * Gets an object from the cache if `injectCache` was enabled and
  * an object was registered with {@link #cache}
  * @param  {string} name
  * @return {THREE.Object3D}

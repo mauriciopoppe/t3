@@ -110,7 +110,8 @@ gulp.task('watch', ['useWatchify', 'browserSync'], function () {
 });
 
 // main tasks
-gulp.task('build', ['browserify', 'compass', 'docs']);
+// docs, build, dist
+gulp.task('build', ['browserify', 'compass']);
 
 gulp.task('dist', ['browserify']);
 

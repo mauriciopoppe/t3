@@ -1,6 +1,6 @@
 t3
 ===
-t3 is a template to build [three.js](threejs.org) applications without worrying about the common set up process and allowing multiple applications per page, this project is inspired by [Jeromme's three.js boilerplate](https://github.com/jeromeetienne/threejsboilerplate)
+t3 is a template to build [three.js](http://threejs.org) applications without worrying about the common set up process and allowing multiple applications per page, this project is inspired by [Jeromme's three.js boilerplate](https://github.com/jeromeetienne/threejsboilerplate)
 
 Features
 --------
@@ -59,7 +59,7 @@ As an alternative if you don't use RequireJS, add the source files (`t3.js` or `
 <head>
 	<meta charset="UTF-8">
 	<title>t3</title>
-	<script src="path/to/bower_components/dist/t3.min.js"></script>	
+	<script src="path/to/bower_components/dist/t3.min.js"></script>
 </head>
 <!-- ... -->
 </html>
@@ -72,7 +72,7 @@ Getting Started
 It's required that you create a DOM element for the application which needs to be identified with an `id`
 
 ```html
-<div id="canvas"></div>	
+<div id="canvas"></div>
 ```
 
 The minimal example requires only the application's wrapper `id`:
@@ -101,7 +101,7 @@ This basic "world" has:
  - A gui control for the visibility of the axes, ground and grids ([Source](https://github.com/maurizzzio/t3/blob/master/src/model/Coordinates.js#L58-67))
  - A gui control to pause the animation ([Source](https://github.com/maurizzzio/t3/blob/master/src/controller/LoopManager.js#L40-48))
  - A gui control for the *maximum frame rate* ([Source](https://github.com/maurizzzio/t3/blob/master/src/controller/LoopManager.js#L33-50))
- 
+
 ### Init & Update
 
 Let's introduce the `init` and `update` methods in the object passed to `t3.run`.
@@ -111,7 +111,7 @@ The `init` method is called after `t3`'s constructor has been called, within thi
 - **scenes**: a pool of scenes
 - **activeScene**: the current scene which is by default `this.scenes.default`
 - **cameras**: a pool of cameras
-- **currentCamera**: the current camera which is a perspective camera with Orbit controls and by default is `this.cameras.default`
+- **activeCamera**: the current camera which is a perspective camera with Orbit controls and by default is `this.cameras.default`
 - **renderer**: a reference to an instance of **THREE.WebGLRenderer**
 - **keyboard**: a reference to the keyboard instance (a utility to store keyboard events)
 - **datgui**: a reference to an instance of **dat.gui**
@@ -392,7 +392,7 @@ If you don't like the dark theme you can switch to the light theme on the defaul
 define(['t3'], function (t3) {
   return t3.run({
     id: 'canvas',
-    theme: 'light',    
+    theme: 'light',
     init: function () {
       var geometry = new THREE.BoxGeometry(20, 20, 20);
       var material = new THREE.MeshNormalMaterial();
@@ -580,8 +580,20 @@ src
 5 directories, 13 files
 ```
 
+Powered by <a href="http://maurizzzio.github.io/PojoViz/public/vulcanize.html#readme">PojoViz</a>:
+
+<iframe style="width: 999px; height: 700px" src="http://maurizzzio.github.io/PojoViz/public/vulcanize.html#render:t3"></iframe>
+
 Changelog
 ---------
+0.1.3
+
+```plain
+PojoViz example embedded
+Functions now have the form `function Name() {` to be analyzed with pojoviz
+Fixed minor typos in the Readme file
+```
+
 0.1.2
 
 ```plain

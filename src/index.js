@@ -19,8 +19,9 @@ var t3 = {
     Keyboard: require('./controller/Keyboard'),
     LoopManager: require('./controller/LoopManager')
   },
-  // it's better to use t3.run
   Application: Application,
+
+  // alias
   run: Application.run
 };
 module.exports = t3;
