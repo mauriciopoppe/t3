@@ -582,7 +582,11 @@ src
 
 Powered by <a href="http://maurizzzio.github.io/PojoViz/public/vulcanize.html#readme">PojoViz</a>:
 
-<iframe style="width: 999px; height: 700px" src="http://maurizzzio.github.io/PojoViz/public/vulcanize.html#render:t3"></iframe>
+<a class="button" href="javascript:;" id="show-pojoviz">
+  View the structure
+</a>
+
+<iframe height="0" id="pojoviz-frame" src=""></iframe>
 
 Changelog
 ---------

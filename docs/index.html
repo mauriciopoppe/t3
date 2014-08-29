@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width">
 
   <title>T3 Docs</title>
-  
+
   <!-- Flatdoc -->
   <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
   <script src='http://rstacruz.github.io/flatdoc/v/0.8.6/legacy.js'></script>
@@ -81,7 +81,7 @@
         });
 
         // example 05
-        var cs = 0;        
+        var cs = 0;
         $('#tp05').click(function (e) {
           getExample('05', function (instance) {
             var scenes = ['default', 'cone', 'sphere'];
@@ -100,6 +100,15 @@
             cc %= cameras.length;
             instance.setActiveCamera(cameras[cc]);
           });
+        });
+
+        $('#show-pojoviz').click(function (e) {
+          $('#pojoviz-frame')
+            .attr({
+              src: 'http://maurizzzio.github.io/PojoViz/public/vulcanize.html#render:t3',
+              width: 999,
+              height: 700
+            });
         });
       });
   </script>
