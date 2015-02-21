@@ -7,6 +7,7 @@ var assert = function (condition, message) {
   }
 };
 
+var emptyFn = function () {};
 var Coordinates = require('../model/Coordinates');
 var Keyboard = require('./Keyboard');
 var LoopManager = require('./LoopManager');
@@ -622,10 +623,8 @@ Application.prototype.getFromCache = function (name) {
  * this function
  */
 Application.run = function (options) {
-  options = objectMerge({
-    init: function () {},
-    update: function () {}
-  }, options);
+  options.init = options.init || emptyFn;
+  options.update = options.update || emptyFn;
   assert(options.selector, 'canvas selector required');
 
   var QuickLaunch = function (options) {
