@@ -1,6 +1,6 @@
 {
   "name": "t3",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Boilerplate for THREEjs",
   "main": "index.js",
   "scripts": {
