@@ -1,4 +1,3 @@
-var _ = require('lodash');
 var THREE = require('THREE');
 
 /**
@@ -86,12 +85,16 @@ function Coordinates(config, theme) {
  */
 Coordinates.prototype.init = function (options) {
   var me = this;
-  _.forOwn(me, function (v, k) {
-    if (v.mesh) {
-      me.mesh.add(v.mesh);
-      v.mesh.visible = v.visible;
+  for (var key in me) {
+    if (me.hasOwnProperty(key)) {
+      var v = me[key];
+      if (v.mesh) {
+        me.mesh.add(v.mesh);
+        v.mesh.visible = v.visible;
+      }
     }
-  });
+  }
+
   return me;
 };
 
@@ -106,16 +109,18 @@ Coordinates.prototype.initDatGui = function (gui) {
     folder;
 
   folder = gui.addFolder('Scene helpers');
-  _.forOwn(me, function (v, k) {
-    if (v.hasOwnProperty('mesh')) {
-      folder.add(v, 'visible')
-        .name(v.name)
-        .onFinishChange(function (newValue) {
-          v.mesh.visible = newValue;
-        });
+  for (var key in me) {
+    if (me.hasOwnProperty(key)) {
+      var v = me[key];
+      if (v.hasOwnProperty('mesh')) {
+        folder.add(v, 'visible')
+          .name(v.name)
+          .onFinishChange(function (newValue) {
+            v.mesh.visible = newValue;
+          });
+      }
     }
-  });
-
+  }
   return me;
 };
 

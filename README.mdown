@@ -593,7 +593,7 @@ Changelog
 
 0.2.0
 ```plain
-id replaced with selector
+config.id replaced with config.selector in the configuration options of t3.run
 ```
 
 0.1.3

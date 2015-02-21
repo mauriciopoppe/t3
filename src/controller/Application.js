@@ -1,11 +1,12 @@
 'use strict';
 
-var _ = require('lodash');
+var objectMerge = require('object-merge');
 var assert = function (condition, message) {
   if (!condition) {
     throw message || 'assertion failed';
   }
 };
+
 var Coordinates = require('../model/Coordinates');
 var Keyboard = require('./Keyboard');
 var LoopManager = require('./LoopManager');
@@ -51,7 +52,7 @@ var THREEx = require('../lib/THREEx/');
  * for the default scene created for this world
  */
 function Application(config) {
-  config = _.merge({
+  config = objectMerge({
     selector: null,
     width: window.innerWidth,
     height: window.innerHeight,
@@ -397,7 +398,7 @@ Application.prototype.initDatGui = function () {
       autoPlace: false
     });
 
-  _.merge(gui.domElement.style, {
+  objectMerge(gui.domElement.style, {
     position: 'absolute',
     top: '0px',
     right: '0px',
@@ -421,7 +422,7 @@ Application.prototype.initStats = function () {
     stats;
   // add Stats.js - https://github.com/mrdoob/stats.js
   stats = new Stats();
-  _.merge(stats.domElement.style, {
+  objectMerge(stats.domElement.style, {
     position: 'absolute',
     zIndex: 1,
     bottom: '0px'
@@ -621,9 +622,9 @@ Application.prototype.getFromCache = function (name) {
  * this function
  */
 Application.run = function (options) {
-  options = _.merge({
+  options = objectMerge({
     init: function () {},
-    update: function () {},
+    update: function () {}
   }, options);
   assert(options.selector, 'canvas selector required');
 
