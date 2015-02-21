@@ -1,6 +1,6 @@
 define(['t3'], function (t3) {
   return t3.run({
-    id: 'canvas',
+    selector: '#canvas',
     init: function () {
       var camera,
         width = window.innerWidth,

@@ -1,3 +1,5 @@
+'use strict';
+
 var _ = require('lodash');
 var assert = function (condition, message) {
   if (!condition) {
@@ -50,7 +52,7 @@ var THREEx = require('../lib/THREEx/');
  */
 function Application(config) {
   config = _.merge({
-    id: null,
+    selector: null,
     width: window.innerWidth,
     height: window.innerHeight,
     renderImmediately: true,
@@ -82,7 +84,7 @@ function Application(config) {
    * Reference to the cameras used in this world
    * @type {Array}
    */
-  this.cameras = {},
+  this.cameras = {};
 
   /**
    * The world can have many cameras, so the this is a reference to
@@ -135,7 +137,7 @@ function Application(config) {
   this.__t3cache__ = {};
 
   Application.prototype.initApplication.call(this);
-};
+}
 
 /**
  * Getter for the initial config
@@ -237,7 +239,7 @@ Application.prototype.createDefaultRenderer = function () {
   renderer.setClearColor(me.theme.clearColor, 1);
   renderer.setSize(config.width, config.height);
   document
-    .getElementById(config.id)
+    .querySelector(config.selector)
     .appendChild(renderer.domElement);
   me.renderer = renderer;
   return me;
@@ -367,7 +369,7 @@ Application.prototype.initMask = function () {
   mask.style.background = 'rgba(0,0,0,0.5)';
 
   document
-    .getElementById(config.id)
+    .querySelector(config.selector)
     .appendChild(mask);
 
   me.mask = mask;
@@ -385,7 +387,7 @@ Application.prototype.maskVisible = function (v) {
 
 /**
  * Inits the dat.gui helper which is placed under the
- * DOM element identified by the initial configuration id
+ * DOM element identified by the initial configuration selector
  * @return {this}
  */
 Application.prototype.initDatGui = function () {
@@ -402,7 +404,7 @@ Application.prototype.initDatGui = function () {
     zIndex: '1'
   });
   document
-    .getElementById(config.id)
+    .querySelector(config.selector)
     .appendChild(gui.domElement);
   me.datgui = gui;
   return me;
@@ -410,7 +412,7 @@ Application.prototype.initDatGui = function () {
 
 /**
  * Init the Stats helper which is placed under the
- * DOM element identified by the initial configuration id
+ * DOM element identified by the initial configuration selector
  * @return {this}
  */
 Application.prototype.initStats = function () {
@@ -425,7 +427,7 @@ Application.prototype.initStats = function () {
     bottom: '0px'
   });
   document
-    .getElementById(config.id)
+    .querySelector(config.selector)
     .appendChild( stats.domElement );
   me.stats = stats;
   return me;
@@ -623,7 +625,7 @@ Application.run = function (options) {
     init: function () {},
     update: function () {},
   }, options);
-  assert(options.id, 'canvas id required');
+  assert(options.selector, 'canvas selector required');
 
   var QuickLaunch = function (options) {
     Application.call(this, options);

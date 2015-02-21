@@ -75,12 +75,12 @@ It's required that you create a DOM element for the application which needs to b
 <div id="canvas"></div>
 ```
 
-The minimal example requires only the application's wrapper `id`:
+The minimal example requires only the application's wrapper selector:
 
 ```javascript
 define(['t3'], function (t3) {
   return t3.run({
-    id: 'canvas'
+    selector: '#canvas'
   });
 });
 ```
@@ -128,7 +128,7 @@ We're used to create an object and add it to the scene, well, now the scene is `
 ```javascript
 define(['t3'], function (t3) {
   return t3.run({
-    id: 'canvas',
+    selector: '#canvas',
     init: function () {
       var geometry = new THREE.BoxGeometry(20, 20, 20);
       var material = new THREE.MeshNormalMaterial();
@@ -159,7 +159,7 @@ Perhaps we might need to call the game loop at a later time, to do so we can add
 ```javascript
 define(['t3'], function (t3) {
   var instance = t3.run({
-    id: 'canvas',
+    selector: '#canvas',
     renderImmediately: false,
     init: function () {
       var geometry = new THREE.BoxGeometry(20, 20, 20);
@@ -212,7 +212,7 @@ The visibility of these elements can be defined in the `ambientConfig` option
 ```javascript
 define(['t3'], function (t3) {
   return t3.run({
-    id: 'canvas',
+    selector: '#canvas',
     ambientConfig: {
       axes: false,
       ground: false,
@@ -250,7 +250,7 @@ Since the application has a pool of scenes, we can create as many scenes as we w
 ```javascript
 define(['t3'], function (t3) {
   return t3.run({
-    id: 'canvas',
+    selector: '#canvas',
     init: function () {
       var scene,
         geometry,
@@ -322,7 +322,7 @@ Since the application has a pool of cameras, adding more cameras is as easy as r
 ```javascript
 define(['t3'], function (t3) {
   return t3.run({
-    id: 'canvas',
+    selector: '#canvas',
     init: function () {
       var camera,
         width = window.innerWidth,
@@ -391,7 +391,7 @@ If you don't like the dark theme you can switch to the light theme on the defaul
 ```javascript
 define(['t3'], function (t3) {
   return t3.run({
-    id: 'canvas',
+    selector: '#canvas',
     theme: 'light',
     init: function () {
       var geometry = new THREE.BoxGeometry(20, 20, 20);
@@ -427,7 +427,7 @@ define(['t3'], function (t3) {
   };
 
   return t3.run({
-    id: 'canvas',
+    selector: '#canvas',
     theme: 'sandyStone',
     init: function () {
       var geometry = new THREE.BoxGeometry(20, 20, 20);
@@ -464,7 +464,7 @@ Another useful utility that the template has is the possibility of caching eleme
 ```javascript
 define(['t3'], function (t3) {
   return t3.run({
-    id: 'canvas',
+    selector: '#canvas',
     injectCache: true,
     init: function () {
       var geometry = new THREE.BoxGeometry(20, 20, 20);
@@ -509,7 +509,7 @@ Application.run = function (options) {
     init: function () {},
     update: function () {},
   }, options);
-  assert(options.id, 'canvas id required');
+  assert(options.selector, 'canvas selector required');
 
   var QuickLaunch = function (options) {
     Application.call(this, options);
@@ -590,6 +590,12 @@ Powered by <a href="http://maurizzzio.github.io/PojoViz/public/vulcanize.html#re
 
 Changelog
 ---------
+
+0.2.0
+```plain
+id replaced with selector
+```
+
 0.1.3
 
 ```plain

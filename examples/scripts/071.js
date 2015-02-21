@@ -7,7 +7,7 @@ define(['t3'], function (t3) {
   };
 
   return t3.run({
-    id: 'canvas',
+    selector: '#canvas',
     theme: 'sandyStone',
     init: function () {
       var geometry = new THREE.BoxGeometry(20, 20, 20);
