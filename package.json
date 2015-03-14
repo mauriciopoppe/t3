@@ -1,6 +1,6 @@
 {
   "name": "t3-boilerplate",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "description": "Boilerplate for THREEjs",
   "main": "src/index.js",
   "repository": "https://github.com/maurizzzio/t3",
