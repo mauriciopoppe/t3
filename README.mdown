@@ -23,6 +23,10 @@ Install the package with bower (recommended):
 bower install t3
 ```
 
+```bash
+npm install t3-boilerplate
+```
+
 Or save the `dist/` files on you project library (the old way)
 
 ### Use with RequireJS
@@ -590,6 +594,11 @@ Powered by <a href="http://maurizzzio.github.io/PojoViz/public/vulcanize.html#re
 
 Changelog
 ---------
+
+0.2.2
+```plain
+available as `t3-boilerplate` in npm
+```
 
 0.2.0
 ```plain
