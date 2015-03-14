@@ -1,4 +1,4 @@
-var THREE = require('THREE');
+var THREE = window.THREE;
 
 /**
  * @module  model/Coordinates

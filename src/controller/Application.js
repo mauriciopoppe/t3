@@ -8,9 +8,9 @@ var assert = function (condition, message) {
 
 var emptyFn = function () {};
 var extend = require('extend');
-var Stats = require('T3.Stats');
-var dat = require('T3.dat');
-var THREE = require('THREE');
+var Stats = require('stats-js');
+var dat = require('dat-gui');
+var THREE = window.THREE;
 
 var Coordinates = require('../model/Coordinates');
 var Keyboard = require('./Keyboard');

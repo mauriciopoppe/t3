@@ -1,5 +1,5 @@
-var THREE = require('THREE');
 var Application = require('./Application');
+var THREE = window.THREE;
 
 /**
  * @module  controller/LoopManager
