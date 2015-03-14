@@ -88,10 +88,7 @@ gulp.task('compass', function () {
 function createTag(type, cb) {
   gulp.src(['./package.json', './bower.json'])
     .pipe(bump({ type: type }))
-    .pipe(gulp.dest('./'))
-    .pipe(git.commit('bump version'))
-    .pipe(filter('package.json'))
-    .pipe(tagVersion());
+    .pipe(gulp.dest('./'));
 
   exec('./push.sh', function (err, stdout, stderr) {
     console.log(stdout);
@@ -108,9 +105,9 @@ gulp.task('watch', ['useWatchify', 'browserSync'], function () {
   gulp.watch('./docs/**/*.scss', ['compass']);
 });
 
-gulp.task('release.major', function (cb) { createTag('major', cb); });
-gulp.task('release.minor', function (cb) { createTag('minor', cb); });
-gulp.task('release.patch', function (cb) { createTag('patch', cb); });
+gulp.task('release:major', function (cb) { createTag('major', cb); });
+gulp.task('release:minor', function (cb) { createTag('minor', cb); });
+gulp.task('release:patch', function (cb) { createTag('patch', cb); });
 
 // main tasks
 // default, build
