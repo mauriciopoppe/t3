@@ -13,7 +13,7 @@ function Keyboard() {
    * @type {Array}
    */
   this.keys = [];
-};
+}
 
 /**
  * Adds the keydown and keyup listeners

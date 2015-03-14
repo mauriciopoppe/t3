@@ -1,6 +1,5 @@
 'use strict';
 
-var objectMerge = require('object-merge');
 var assert = function (condition, message) {
   if (!condition) {
     throw message || 'assertion failed';
@@ -8,12 +7,14 @@ var assert = function (condition, message) {
 };
 
 var emptyFn = function () {};
-var Coordinates = require('../model/Coordinates');
-var Keyboard = require('./Keyboard');
-var LoopManager = require('./LoopManager');
+var extend = require('extend');
 var Stats = require('T3.Stats');
 var dat = require('T3.dat');
 var THREE = require('THREE');
+
+var Coordinates = require('../model/Coordinates');
+var Keyboard = require('./Keyboard');
+var LoopManager = require('./LoopManager');
 var THREEx = require('../lib/THREEx/');
 /**
  * @module controller/Application
@@ -53,7 +54,7 @@ var THREEx = require('../lib/THREEx/');
  * for the default scene created for this world
  */
 function Application(config) {
-  config = objectMerge({
+  config = extend({
     selector: null,
     width: window.innerWidth,
     height: window.innerHeight,
@@ -61,7 +62,7 @@ function Application(config) {
     injectCache: false,
     fullScreen: false,
     theme: 'dark',
-    ambientConfig: {},
+    helpersConfig: {},
     defaultSceneConfig: {
       fog: true
     }
@@ -310,9 +311,9 @@ Application.prototype.createCameraControls = function (camera) {
     me.renderer.domElement
   );
   // avoid panning to see the bottom face
-  camera.cameraControls.maxPolarAngle = Math.PI / 2 * 0.99;
-  camera.cameraControls.target.set(100, 100, 100);
-  // camera.cameraControls.target.set(0, 0, 0);
+  //camera.cameraControls.maxPolarAngle = Math.PI / 2 * 0.99;
+  //camera.cameraControls.target.set(100, 100, 100);
+  camera.cameraControls.target.set(0, 0, 0);
   return me;
 };
 
@@ -399,7 +400,7 @@ Application.prototype.initDatGui = function () {
       autoPlace: false
     });
 
-  objectMerge(gui.domElement.style, {
+  extend(gui.domElement.style, {
     position: 'absolute',
     top: '0px',
     right: '0px',
@@ -423,7 +424,7 @@ Application.prototype.initStats = function () {
     stats;
   // add Stats.js - https://github.com/mrdoob/stats.js
   stats = new Stats();
-  objectMerge(stats.domElement.style, {
+  extend(stats.domElement.style, {
     position: 'absolute',
     zIndex: 1,
     bottom: '0px'
@@ -454,7 +455,7 @@ Application.prototype.initCoordinates = function () {
   var config = this.getConfig();
   this.scenes['default']
     .add(
-      new Coordinates(config.ambientConfig, this.theme)
+      new Coordinates(config.helpersConfig, this.theme)
         .initDatGui(this.datgui)
         .mesh
     );

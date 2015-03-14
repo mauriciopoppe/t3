@@ -7,7 +7,8 @@
  * @type {Object}
  */
 module.exports = {
-	clearColor: 0x595959,
-	fogColor: 0x595959,
-  groundColor: 0x393939
+	clearColor: 0x3f3f3f,
+	fogColor: 0x3f3f3f,
+  groundColor: 0x333333,
+  gridColor: 0x555555
 };

@@ -4,25 +4,24 @@ var watchify = require('watchify');
 var browserify = require('browserify');
 var source = require('vinyl-source-stream');
 var exec = require('child_process').exec;
-var pkg = require('./package.json');
-var path = require('path');
 
 // gulp extras
 var gulp = require('gulp');
 var git = require('gulp-git');
 var compass = require('gulp-compass');
-var concat = require('gulp-concat');
 var jsdoc = require('gulp-jsdoc');
 var bump = require('gulp-bump');
 var filter = require('gulp-filter');
 var tagVersion = require('gulp-tag-version');
 var useWatchify;
 
+var name = 't3';
+
 function run(bundler, minify) {
   if (minify) {
     bundler = bundler.plugin('minifyify', {
-      map: pkg.name + '.map.json',
-      output: './dist/' + pkg.name + '.map.json'
+      map: name + '.map.json',
+      output: './dist/' + name + '.map.json'
     });
   }
 
@@ -30,9 +29,9 @@ function run(bundler, minify) {
   return bundler
     .bundle({
       debug: true,
-      standalone: pkg.name
+      standalone: name
     })
-    .pipe(source(pkg.name + (minify ? '.min' : '') + '.js'))
+    .pipe(source(name + (minify ? '.min' : '') + '.js'))
     .pipe(gulp.dest('./dist/'))
     .on('end', function () {
       console.timeEnd('build');
@@ -109,14 +108,11 @@ gulp.task('watch', ['useWatchify', 'browserSync'], function () {
   gulp.watch('./docs/**/*.scss', ['compass']);
 });
 
-// main tasks
-// docs, build, dist
-gulp.task('build', ['browserify', 'compass']);
-
-gulp.task('dist', ['browserify']);
-
 gulp.task('release.major', function (cb) { createTag('major', cb); });
 gulp.task('release.minor', function (cb) { createTag('minor', cb); });
 gulp.task('release.patch', function (cb) { createTag('patch', cb); });
 
+// main tasks
+// default, build
+gulp.task('build', ['browserify', 'compass']);
 gulp.task('default', ['watch']);

@@ -217,7 +217,7 @@ The visibility of these elements can be defined in the `ambientConfig` option
 define(['t3'], function (t3) {
   return t3.run({
     selector: '#canvas',
-    ambientConfig: {
+    helpersConfig: {
       axes: false,
       ground: false,
       gridX: true,
@@ -534,8 +534,6 @@ Application.run = function (options) {
 
 - Render only on mouseover
 - Pause if not visible
-- Add sole's tween engine to the bundle
-- Add pojoviz example
 
 Development
 -----------
@@ -594,6 +592,12 @@ Powered by <a href="http://maurizzzio.github.io/PojoViz/public/vulcanize.html#re
 
 Changelog
 ---------
+
+0.2.3
+```plain
+`ambientConfig` renamed to `helpersConfig`
+`Coordinates` now uses `THREE.Grid`
+```
 
 0.2.2
 ```plain

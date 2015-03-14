@@ -25,18 +25,23 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>var _ = require('lodash');
+            <pre class="prettyprint source linenums"><code>'use strict';
+
 var assert = function (condition, message) {
   if (!condition) {
     throw message || 'assertion failed';
   }
 };
-var Coordinates = require('../model/Coordinates');
-var Keyboard = require('./Keyboard');
-var LoopManager = require('./LoopManager');
+
+var emptyFn = function () {};
+var extend = require('extend');
 var Stats = require('T3.Stats');
 var dat = require('T3.dat');
 var THREE = require('THREE');
+
+var Coordinates = require('../model/Coordinates');
+var Keyboard = require('./Keyboard');
+var LoopManager = require('./LoopManager');
 var THREEx = require('../lib/THREEx/');
 /**
  * @module controller/Application
@@ -47,7 +52,7 @@ var THREEx = require('../lib/THREEx/');
  * the canvas for the three.js app it creates a dat.gui instance
  * (to control objects of the app with a gui) and a Stats instance
  * (to view the current framerate)
- * 
+ *
  * @class
  * @param {Object} config An object containing the following:
  * @param {string} [config.id=null] The id of the DOM element to inject the elements to
@@ -56,11 +61,11 @@ var THREEx = require('../lib/THREEx/');
  * @param {number} [config.height=window.innerHeight]
  * The height of the canvas
  * @param {boolean} [config.renderImmediately=true]
- * False to disable the game loop when the application starts, if 
+ * False to disable the game loop when the application starts, if
  * you want to resume the loop call `application.loopManager.start()`
  * @param {boolean} [config.injectCache=false]
  * True to add a wrapper over `THREE.Object3D.prototype.add` and
- * `THREE.Object3D.prototype.remove` so that it catches the last element 
+ * `THREE.Object3D.prototype.remove` so that it catches the last element
  * and perform additional operations over it, with this mechanism
  * we allow the application to have an internal cache of the elements of
  * the application
@@ -76,15 +81,15 @@ var THREEx = require('../lib/THREEx/');
  * for the default scene created for this world
  */
 function Application(config) {
-  config = _.merge({
-    id: null,
+  config = extend({
+    selector: null,
     width: window.innerWidth,
     height: window.innerHeight,
     renderImmediately: true,
     injectCache: false,
     fullScreen: false,
     theme: 'dark',
-    ambientConfig: {},
+    helpersConfig: {},
     defaultSceneConfig: {
       fog: true
     }
@@ -109,7 +114,7 @@ function Application(config) {
    * Reference to the cameras used in this world
    * @type {Array}
    */
-  this.cameras = {},
+  this.cameras = {};
 
   /**
    * The world can have many cameras, so the this is a reference to
@@ -148,7 +153,7 @@ function Application(config) {
    * @type {LoopManager}
    */
   this.loopManager = null;
-  
+
   /**
    * Colors for the default scene
    * @type {Object}
@@ -162,7 +167,7 @@ function Application(config) {
   this.__t3cache__ = {};
 
   Application.prototype.initApplication.call(this);
-};
+}
 
 /**
  * Getter for the initial config
@@ -181,7 +186,7 @@ Application.prototype.getConfig = function () {
  * - Initializes dat.gui, Stats, a mask when the application is paised
  * - Initializes fullScreen events, keyboard and some helper objects
  * - Calls the game loop
- * 
+ *
  */
 Application.prototype.initApplication = function () {
   var me = this,
@@ -264,7 +269,7 @@ Application.prototype.createDefaultRenderer = function () {
   renderer.setClearColor(me.theme.clearColor, 1);
   renderer.setSize(config.width, config.height);
   document
-    .getElementById(config.id)
+    .querySelector(config.selector)
     .appendChild(renderer.domElement);
   me.renderer = renderer;
   return me;
@@ -276,7 +281,7 @@ Application.prototype.setActiveCamera = function (key) {
 };
 
 Application.prototype.addCamera = function (camera, key) {
-  console.assert(camera instanceof THREE.PerspectiveCamera || 
+  console.assert(camera instanceof THREE.PerspectiveCamera ||
     camera instanceof THREE.OrthographicCamera);
   this.cameras[key] = camera;
   return this;
@@ -333,9 +338,9 @@ Application.prototype.createCameraControls = function (camera) {
     me.renderer.domElement
   );
   // avoid panning to see the bottom face
-  camera.cameraControls.maxPolarAngle = Math.PI / 2 * 0.99;
-  camera.cameraControls.target.set(100, 100, 100);
-  // camera.cameraControls.target.set(0, 0, 0);
+  //camera.cameraControls.maxPolarAngle = Math.PI / 2 * 0.99;
+  //camera.cameraControls.target.set(100, 100, 100);
+  camera.cameraControls.target.set(0, 0, 0);
   return me;
 };
 
@@ -391,10 +396,10 @@ Application.prototype.initMask = function () {
   mask.style.top = '0px';
   mask.style.width = '100%';
   mask.style.height = '100%';
-  mask.style.background = 'rgba(0,0,0,0.5)';    
+  mask.style.background = 'rgba(0,0,0,0.5)';
 
   document
-    .getElementById(config.id)
+    .querySelector(config.selector)
     .appendChild(mask);
 
   me.mask = mask;
@@ -411,8 +416,8 @@ Application.prototype.maskVisible = function (v) {
 };
 
 /**
- * Inits the dat.gui helper which is placed under the 
- * DOM element identified by the initial configuration id
+ * Inits the dat.gui helper which is placed under the
+ * DOM element identified by the initial configuration selector
  * @return {this}
  */
 Application.prototype.initDatGui = function () {
@@ -422,22 +427,22 @@ Application.prototype.initDatGui = function () {
       autoPlace: false
     });
 
-  _.merge(gui.domElement.style, {
+  extend(gui.domElement.style, {
     position: 'absolute',
     top: '0px',
     right: '0px',
     zIndex: '1'
   });
   document
-    .getElementById(config.id)
+    .querySelector(config.selector)
     .appendChild(gui.domElement);
   me.datgui = gui;
   return me;
 };
 
 /**
- * Init the Stats helper which is placed under the 
- * DOM element identified by the initial configuration id
+ * Init the Stats helper which is placed under the
+ * DOM element identified by the initial configuration selector
  * @return {this}
  */
 Application.prototype.initStats = function () {
@@ -446,13 +451,13 @@ Application.prototype.initStats = function () {
     stats;
   // add Stats.js - https://github.com/mrdoob/stats.js
   stats = new Stats();
-  _.merge(stats.domElement.style, {
+  extend(stats.domElement.style, {
     position: 'absolute',
     zIndex: 1,
     bottom: '0px'
   });
   document
-    .getElementById(config.id)
+    .querySelector(config.selector)
     .appendChild( stats.domElement );
   me.stats = stats;
   return me;
@@ -477,7 +482,7 @@ Application.prototype.initCoordinates = function () {
   var config = this.getConfig();
   this.scenes['default']
     .add(
-      new Coordinates(config.ambientConfig, this.theme)
+      new Coordinates(config.helpersConfig, this.theme)
         .initDatGui(this.datgui)
         .mesh
     );
@@ -509,7 +514,7 @@ Application.prototype.gameLoop = function () {
  *
  * - The stats helper
  * - The camera controls if the active camera has one
- * 
+ *
  * @param {number} delta The number of seconds elapsed
  */
 Application.prototype.update = function (delta) {
@@ -549,15 +554,15 @@ Application.prototype.render = function () {
  *     init: function () {
  *       var group = new THREE.Object3D();
  *       var innerGroup = new THREE.Object3D();
- *       
+ *
  *       var geometry = new THREE.BoxGeometry(1,1,1);
  *       var material = new THREE.MeshBasicMaterial({color: 0x00ff00});
  *       var cube = new THREE.Mesh(geometry, material);
- *       
+ *
  *       innerGroup
  *         .add(cube)
  *         .cache('myCube');
- * 
+ *
  *       group
  *         .add(innerGroup)
  *         .cache('innerGroup');
@@ -577,7 +582,7 @@ Application.prototype.render = function () {
  *       // perform operations on the cube
  *     }
  *   });
- *   
+ *
  * @param  {boolean} inject True to enable this behavior
  */
 Application.prototype.injectCache = function (inject) {
@@ -623,7 +628,7 @@ Application.prototype.injectCache = function (inject) {
 };
 
 /**
- * Gets an object from the cache if `injectCache` was enabled and 
+ * Gets an object from the cache if `injectCache` was enabled and
  * an object was registered with {@link #cache}
  * @param  {string} name
  * @return {THREE.Object3D}
@@ -646,11 +651,9 @@ Application.prototype.getFromCache = function (name) {
  * this function
  */
 Application.run = function (options) {
-  options = _.merge({
-    init: function () {},
-    update: function () {},
-  }, options);
-  assert(options.id, 'canvas id required');
+  options.init = options.init || emptyFn;
+  options.update = options.update || emptyFn;
+  assert(options.selector, 'canvas selector required');
 
   var QuickLaunch = function (options) {
     Application.call(this, options);
@@ -682,7 +685,7 @@ module.exports = Application;</code></pre>
 <br clear="both">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-alpha5</a> on Tue Aug 05 2014 11:04:53 GMT-0400 (BOT)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-alpha5</a> on Sat Mar 14 2015 03:21:45 GMT-0400 (BOT)
 </footer>
 
 <script> prettyPrint(); </script>

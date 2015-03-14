@@ -8,7 +8,7 @@ require('./lib/OrbitControls');
 var Application = require('./controller/Application');
 var t3 = {
   model: {
-    Coordinates: require('./model/Coordinates'),
+    Coordinates: require('./model/Coordinates')
   },
   themes: {
     dark: require('./themes/dark'),

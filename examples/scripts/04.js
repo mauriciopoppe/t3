@@ -1,7 +1,7 @@
 define(['t3'], function (t3) {
   return t3.run({
     selector: '#canvas',
-    ambientConfig: {
+    helpersConfig: {
       axes: false,
       ground: false,
       gridX: true,

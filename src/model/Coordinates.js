@@ -29,7 +29,7 @@ function Coordinates(config, theme) {
     name: 'Axes',
     mesh: this.drawAllAxes({axisLength:100,axisRadius:1,axisTess:50}),
     visible: config.axes !== undefined ? config.axes : true
-  },
+  };
 
   /**
    * Ground object, the mesh representing the axes is under this object
@@ -49,7 +49,7 @@ function Coordinates(config, theme) {
    */
   this.gridX = {
     name: 'XZ grid',
-    mesh: this.drawGrid({size:10000,scale:0.01}),
+    mesh: this.drawGrid({size:10000, scale:0.01, color: theme.gridColor}),
     visible: config.gridX !== undefined ? config.gridX : true
   };
 
@@ -60,7 +60,7 @@ function Coordinates(config, theme) {
    */  
   this.gridY = {
     name: 'YZ grid',
-    mesh: this.drawGrid({size:10000,scale:0.01, orientation:"y"}),
+    mesh: this.drawGrid({size:10000, scale:0.01, orientation:"y", color: theme.gridColor}),
     visible: config.gridY !== undefined ? config.gridY : false
   };
   
@@ -71,12 +71,12 @@ function Coordinates(config, theme) {
    */
   this.gridZ = {
     name: 'XY grid',
-    mesh: this.drawGrid({size:10000,scale:0.01, orientation:"z"}),
+    mesh: this.drawGrid({size:10000, scale:0.01, orientation:"z", color: theme.gridColor}),
     visible: config.gridZ !== undefined ? config.gridZ : false
   };
 
   Coordinates.prototype.init.call(this, config);
-};
+}
 
 /**
  * Adds the axes, ground, grid meshes to `this.mesh`
@@ -115,9 +115,11 @@ Coordinates.prototype.initDatGui = function (gui) {
       if (v.hasOwnProperty('mesh')) {
         folder.add(v, 'visible')
           .name(v.name)
-          .onFinishChange(function (newValue) {
-            v.mesh.visible = newValue;
-          });
+          .onFinishChange((function (property) {
+            return function (newValue) {
+              property.mesh.visible = newValue;
+            };
+          })(v));
       }
     }
   }
@@ -135,17 +137,10 @@ Coordinates.prototype.initDatGui = function (gui) {
  */
 Coordinates.prototype.drawGrid = function (params) {
   params = params || {};
-  var size = params.size !== undefined ? params.size:100;
-  var scale = params.scale !== undefined ? params.scale:0.1;
   var color = params.color !== undefined ? params.color:'#505050';
   var orientation = params.orientation !== undefined ? params.orientation:"x";
-  var grid = new THREE.Mesh(
-    new THREE.PlaneGeometry(size, size, size * scale, size * scale),
-    new THREE.MeshBasicMaterial({
-      color: color,
-      wireframe: true
-    })
-  );
+  var grid = new THREE.GridHelper( 500, 10 );
+  grid.setColors( 0xa8a8a8, color );
   if (orientation === "x") {
     grid.rotation.x = - Math.PI / 2;
   } else if (orientation === "y") {
@@ -168,11 +163,14 @@ Coordinates.prototype.drawGround = function (params) {
   params = params || {};
   var size = params.size !== undefined ? params.size:100;
   var color = params.color !== undefined ? params.color:0x000000;
-  var offset = params.offset !== undefined ? params.offset:-0.2;
+  var offset = params.offset !== undefined ? params.offset:-0.5;
 
   var ground = new THREE.Mesh(
     new THREE.PlaneGeometry(size, size),
     new THREE.MeshBasicMaterial({
+      transparent: true,
+      side: THREE.DoubleSide,
+      opacity: 0.6,
       color: color
     })
   );
@@ -239,8 +237,8 @@ Coordinates.prototype.drawAxes = function (params) {
 Coordinates.prototype.drawAllAxes = function (params) {
   params = params || {};
   var axisRadius = params.axisRadius !== undefined ? params.axisRadius:0.04;
-  var axisLength = params.axisLength !== undefined ? params.axisLength:11;
-  var axisTess = params.axisTess !== undefined ? params.axisTess:48;
+  var axisLength = params.axisLength !== undefined ? params.axisLength:10;
+  var axisTess = params.axisTess !== undefined ? params.axisTess:24;
 
   var wrap = new THREE.Object3D();
 

@@ -1,8 +1,15 @@
 {
   "name": "t3-boilerplate",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "Boilerplate for THREEjs",
   "main": "index.js",
+  "repository": "https://github.com/maurizzzio/t3",
+  "homepage": "https://github.com/maurizzzio/t3",
+  "bugs": "https://github.com/maurizzzio/t3/issues",
+  "engines": {
+    "node": ">= 0.10.0",
+    "npm": ">=1.2.10"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -36,5 +43,8 @@
     "object-merge": "^2.5.1",
     "vinyl-source-stream": "~0.1.1",
     "watchify": "~0.10.2"
+  },
+  "dependencies": {
+    "extend": "^2.0.0"
   }
 }
