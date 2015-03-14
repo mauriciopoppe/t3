@@ -593,6 +593,16 @@ Powered by <a href="http://maurizzzio.github.io/PojoViz/public/vulcanize.html#re
 Changelog
 ---------
 
+0.2.5
+```plain
+`browserify-shim` is no longer a dependency
+```
+
+0.2.4
+```plain
+`extend` is used to merge objects
+```
+
 0.2.3
 ```plain
 `ambientConfig` renamed to `helpersConfig`
