@@ -12,6 +12,12 @@ Features
 - Themes for the default scene
 - Frame rate control
 
+Playground
+----------
+
+Powered by <img src="http://requirebin.com/img/logo-black.png"></img>
+
+
 Installation
 ------------
 
