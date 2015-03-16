@@ -15,8 +15,9 @@ Features
 Playground
 ----------
 
-Powered by <img src="http://requirebin.com/img/logo-black.png"></img>
+Powered by: <a href="http://requirebin.com/?gist=a9dd49e5690f37dc268a" target="_blank"><img src="http://requirebin.com/img/logo-black.png"></img></a>
 
+[Fork it](https://gist.github.com/maurizzzio/a9dd49e5690f37dc268a) and have fun!
 
 Installation
 ------------
@@ -225,7 +226,7 @@ There are 5 groups on the default scene:
 - A grid on the YZ plane
 - A grid on the XY plane
 
-The visibility of these elements can be defined in the `ambientConfig` option
+The visibility of these elements can be defined in the `helpersConfig` option
 
 ```javascript
 define(['t3'], function (t3) {
