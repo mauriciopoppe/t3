@@ -16,6 +16,7 @@ var Coordinates = require('../model/Coordinates');
 var Keyboard = require('./Keyboard');
 var LoopManager = require('./LoopManager');
 var THREEx = require('../lib/THREEx/');
+var themes = require('../themes/');
 /**
  * @module controller/Application
  */
@@ -346,10 +347,12 @@ Application.prototype.createDefaultLights = function () {
  * @return {this}
  */
 Application.prototype.setTheme = function (name) {
-  var me = this,
-    themes = require('../').themes;
-  assert(themes[name]);
-  me.theme = themes[name];
+  var me = this;
+  if (themes[name]) {
+    me.theme = themes[name];
+  } else {
+    console.warn('theme not found!');
+  }
   return me;
 };
 

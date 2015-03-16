@@ -10,10 +10,7 @@ var t3 = {
   model: {
     Coordinates: require('./model/Coordinates')
   },
-  themes: {
-    dark: require('./themes/dark'),
-    light: require('./themes/light')
-  },
+  themes: require('./themes/'),
   controller: {
     Application: Application,
     Keyboard: require('./controller/Keyboard'),

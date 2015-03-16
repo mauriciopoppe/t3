@@ -89,12 +89,6 @@ function createTag(type, cb) {
   gulp.src(['./package.json', './bower.json'])
     .pipe(bump({ type: type }))
     .pipe(gulp.dest('./'));
-
-  exec('./push.sh', function (err, stdout, stderr) {
-    console.log(stdout);
-    console.log(stderr);
-    cb(err);
-  });
 }
 
 gulp.task('useWatchify', function () {

@@ -1,12 +1,12 @@
 t3
 ===
-t3 is a template to build [three.js](http://threejs.org) applications without worrying about the common set up process and allowing multiple applications per page, this project is inspired by [Jeromme's three.js boilerplate](https://github.com/jeromeetienne/threejsboilerplate)
+t3 is a template to build [three.js](http://threejs.org) demos without worrying about the common set up process and allowing multiple applications per page, this project is inspired by [Jeromme's three.js boilerplate](https://github.com/jeromeetienne/threejsboilerplate)
 
 Features
 --------
 - Module defined to work anywhere (follows the UMD pattern)
 - Integration with [dat.gui](http://workshop.chromeexperiments.com/examples/gui/) and [Stats](https://github.com/mrdoob/stats.js/)
-- Micro scene handler for your multistaged app/game :)
+- Micro scene handler for your multistaged demo :)
 - Micro camera manager
 - Keyboard manager utility to catch keyboard events
 - Themes for the default scene
@@ -15,16 +15,24 @@ Features
 Installation
 ------------
 
+### NPM
+
+```bash
+npm install --save-dev t3-boilerplate
+```
+
+Usage:
+
+```
+var t3 = require('t3-boilerplate')
+```
+
 ### Bower
 
 Install the package with bower (recommended):
 
 ```bash
 bower install t3
-```
-
-```bash
-npm install t3-boilerplate
 ```
 
 Or save the `dist/` files on you project library (the old way)
