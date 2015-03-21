@@ -15,7 +15,7 @@ Features
 Playground
 ----------
 
-Powered by: <a href="http://requirebin.com/?gist=a9dd49e5690f37dc268a" target="_blank"><img src="http://requirebin.com/img/logo-black.png"></img></a>
+[![view on requirebin](http://requirebin.com/badge.png)](http://requirebin.com/?gist=a9dd49e5690f37dc268a)
 
 [Fork it](https://gist.github.com/maurizzzio/a9dd49e5690f37dc268a) and have fun!
 
