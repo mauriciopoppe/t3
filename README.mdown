@@ -1,16 +1,15 @@
 t3
 ===
-t3 is a template to build [three.js](http://threejs.org) demos without worrying about the common set up process and allowing multiple applications per page, this project is inspired by [Jeromme's three.js boilerplate](https://github.com/jeromeetienne/threejsboilerplate)
+t3 is a template to build [three.js](http://threejs.org) demos without dealing with the common set up process, this project is inspired by [Jeromme's three.js boilerplate](https://github.com/jeromeetienne/threejsboilerplate)
 
 Features
 --------
-- Module defined to work anywhere (follows the UMD pattern)
+
 - Integration with [dat.gui](http://workshop.chromeexperiments.com/examples/gui/) and [Stats](https://github.com/mrdoob/stats.js/)
 - Micro scene handler for your multistaged demo :)
 - Micro camera manager
-- Keyboard manager utility to catch keyboard events
 - Themes for the default scene
-- Frame rate control
+- Fully integrated with `game-shell`
 
 Playground
 ----------
@@ -70,7 +69,8 @@ define(['t3'], function (t3) {
 
 ### Explicitly importing the file on your project
 
-As an alternative if you don't use RequireJS, add the source files (`t3.js` or `t3.min.js` which can be loaded with the source map for debugging purposes) to your page
+As an alternative if you don't use RequireJS, add the source file (`t3.js` which can be loaded with the source map for debugging purposes) to your page,
+t3 will be available through the global t3
 
 ```html
 <!DOCTYPE html>
@@ -78,10 +78,14 @@ As an alternative if you don't use RequireJS, add the source files (`t3.js` or `
 <head>
 	<meta charset="UTF-8">
 	<title>t3</title>
-	<script src="path/to/bower_components/dist/t3.min.js"></script>
+	<script src="path/to/bower_components/dist/t3.js"></script>
 </head>
 <!-- ... -->
 </html>
+```
+
+```javascript
+var t3 = window.t3;
 ```
 
 Getting Started
@@ -94,17 +98,16 @@ It's required that you create a DOM element for the application which needs to b
 <div id="canvas"></div>
 ```
 
-The minimal example requires only the application's wrapper selector:
+The minimal example requires a css selector to an element to render the app into:
 
 ```javascript
+// examples/scripts/01.js
 define(['t3'], function (t3) {
-  return t3.run({
-    selector: '#canvas'
-  });
+  t3({ target: '#canvas' });
 });
 ```
 
-<iframe class="t3-example" src="../examples/?k=01">
+<iframe id="t301" class="t3-example" src="../examples/?k=01">
 </iframe>
 
 [Fullscreen >](http://maurizzzio.github.io/t3/examples/?k=01)
@@ -114,50 +117,60 @@ This basic "world" has:
 
 - A default scene
 - A default camera with [OrbitControls](https://github.com/mrdoob/three.js/blob/master/examples/js/controls/OrbitControls.js)
-- A a grid in the XZ plane (defined in the [Coordinates model](https://github.com/maurizzzio/t3/blob/master/src/model/Coordinates.js#L22))
 - A set of axes positioned at the center of the scene ([Source](https://github.com/maurizzzio/t3/blob/master/src/model/Coordinates.js#L10))
-- A dat-gui folder to enable/disable some options ([Source](https://github.com/maurizzzio/t3/blob/master/src/controller/LoopManager.js#L36-38))
- - A gui control for the visibility of the axes, ground and grids ([Source](https://github.com/maurizzzio/t3/blob/master/src/model/Coordinates.js#L58-67))
- - A gui control to pause the animation ([Source](https://github.com/maurizzzio/t3/blob/master/src/controller/LoopManager.js#L40-48))
- - A gui control for the *maximum frame rate* ([Source](https://github.com/maurizzzio/t3/blob/master/src/controller/LoopManager.js#L33-50))
+- A gui control to see the info stored on [`game-shell`](https://github.com/mikolalysenko/game-shell) ([Source](https://github.com/maurizzzio/t3/blob/master/src/model/Coordinates.js#L58-67))
+- A gui control to hide/show helpers on the main scene ([Source](https://github.com/maurizzzio/t3/blob/master/src/model/Coordinates.js#L58-67))
 
-### Init & Update
+### init, tick and render
 
-Let's introduce the `init` and `update` methods in the object passed to `t3.run`.
+The game loop is fully controlled by the awesome `game-shell`, besides checking when the dom is ready to start
+the application it also emits multiple events to notify when the game state needs to be updated **it's not tied to the
+rendering rate**, t3 provides hooks to access the following stages (taken from `game-shell`)
 
-The `init` method is called after `t3`'s constructor has been called, within this method `this` has the following properties:
+- `init`
+
+This event is fired once the document is loaded and it is safe to access the DOM
+
+- `tick`
+
+Called each time the game state needs to be updated. This is not tied to rendering rate.
+
+- `render ([frame_time])`
+
+Called when a frame is redrawn. The optional parameter frame_time is a floating point value between 0 and 1 which measures the fractional amount of frames since the last time the game was ticked. This can be used to create smoother sub-tick animations if desired.
+
+When the `init` event is fired `t3` will create the following elements for you
 
 - **scenes**: a pool of scenes
-- **activeScene**: the current scene which is by default `this.scenes.default`
+- **activeScene**: the active scene accessible during any stage through `this.scenes['default']`
 - **cameras**: a pool of cameras
-- **activeCamera**: the current camera which is a perspective camera with Orbit controls and by default is `this.cameras.default`
+- **activeCamera**: the active scene accessible during any stage through `this.cameras['default']`, t3 creates a
+perspective camera by default
 - **renderer**: a reference to an instance of **THREE.WebGLRenderer**
-- **keyboard**: a reference to the keyboard instance (a utility to store keyboard events)
 - **datgui**: a reference to an instance of **dat.gui**
-- **loopManager**: this instance controls the application frame rate and paused state
 - **theme**: the theme of the application
 - *__t3cache__*: the internal cache if `injectCache` is passed as a configuration option
 
-The `update` method is called from `this.loopManager` and receives the time elapsed since the last frame a.k.a. `delta`
+NOTE: the game shell instance can be accessed through **this.shell**
 
 ### A rotating cube
 
 We're used to create an object and add it to the scene, well, now the scene is `this.activeScene` and the object has to be added to it:
 
 ```javascript
+// examples/scripts/02.js
 define(['t3'], function (t3) {
-  return t3.run({
-    selector: '#canvas',
+  return t3({
+    target: '#canvas',
     init: function () {
       var geometry = new THREE.BoxGeometry(20, 20, 20);
       var material = new THREE.MeshNormalMaterial();
       this.cube = new THREE.Mesh(geometry, material);
       this.cube.position.set(100, 100, 100);
-      // this.activeScene equals this.scenes.default
-      this.activeScene
-        .add(this.cube);
+      // this.activeScene points to this.scenes.default
+      this.activeScene.add(this.cube);
     },
-    update: function (delta) {
+    tick: function (delta) {
       this.cube.rotation.x += 0.01;
       this.cube.rotation.y += 0.01;
     }
@@ -165,39 +178,36 @@ define(['t3'], function (t3) {
 });
 ```
 
-<iframe class="t3-example" src="../examples/?k=02">
+<iframe id="t302" class="t3-example" src="../examples/?k=02">
 </iframe>
 
 [Fullscreen >](http://maurizzzio.github.io/t3/examples/?k=02)
 [Source Code >](http://github.com/maurizzzio/t3/blob/master/examples/scripts/02.js)
 
-### Delaying the game loop
+### Pause
 
-Perhaps we might need to call the game loop at a later time, to do so we can add the option `renderImmediately: false`
+We can pause the continuous calls to `tick` by calling `this.shell.paused = true`,
+set it to false to unpause it, you can achieve the same with the gui helper
 
 ```javascript
+// examples/scripts/03.js
 define(['t3'], function (t3) {
-  var instance = t3.run({
-    selector: '#canvas',
-    renderImmediately: false,
+  return t3({
+    target: '#canvas',
     init: function () {
       var geometry = new THREE.BoxGeometry(20, 20, 20);
       var material = new THREE.MeshNormalMaterial();
       this.cube = new THREE.Mesh(geometry, material);
       this.cube.position.set(100, 100, 100);
-      // this.activeScene equals this.scenes.default
-      this.activeScene
-        .add(this.cube);
+      this.activeScene.add(this.cube);
     },
-    update: function (delta) {
+    tick: function () {
       this.cube.rotation.x += 0.01;
       this.cube.rotation.y += 0.01;
     }
   });
 });
 ```
-
-To make it renderable again at some point call `instance.loopManager.start()` where the instance is the value returned from calling `t3.run`
 
 <iframe id="t303" class="t3-example" src="../examples/?k=03">
 </iframe>
@@ -209,9 +219,7 @@ To make it renderable again at some point call `instance.loopManager.start()` wh
 Code for the toggle example:
 
 ```javascript
-// instance is the value returned from calling `t3.run`
-var paused = instance.loopManager.pause;
-instance.loopManager[paused ? 'start' : 'stop']();
+// instance is the value returned from calling `t3`
 ```
 
 [Fullscreen >](http://maurizzzio.github.io/t3/examples/?k=03)
@@ -220,19 +228,20 @@ instance.loopManager[paused ? 'start' : 'stop']();
 ### Disabling some objects in the default scene
 There are 5 groups on the default scene:
 
-- *(visible)* A set of axes (RGB = XYZ)
-- *(visible)* Ground
-- *(visible)* A grid on the XZ plane
+- A set of axes (RGB = XYZ)
+- Ground
+- A grid on the XZ plane
 - A grid on the YZ plane
 - A grid on the XY plane
 
-The visibility of these elements can be defined in the `helpersConfig` option
+The visibility of these elements can be defined in the `helpersOptions` option
 
 ```javascript
+// examples/scripts/04.js
 define(['t3'], function (t3) {
-  return t3.run({
-    selector: '#canvas',
-    helpersConfig: {
+  return t3({
+    target: '#canvas',
+    helperOptions: {
       axes: false,
       ground: false,
       gridX: true,
@@ -244,11 +253,9 @@ define(['t3'], function (t3) {
       var material = new THREE.MeshNormalMaterial();
       this.cube = new THREE.Mesh(geometry, material);
       this.cube.position.set(100, 100, 100);
-      // this.activeScene equals this.scenes.default
-      this.activeScene
-        .add(this.cube);
+      this.activeScene.add(this.cube);
     },
-    update: function (delta) {
+    tick: function () {
       this.cube.rotation.x += 0.01;
       this.cube.rotation.y += 0.01;
     }
@@ -267,9 +274,10 @@ define(['t3'], function (t3) {
 Since the application has a pool of scenes, we can create as many scenes as we want and change it in runtime, to do so we can call `this.setActiveScene` with the name of the scene:
 
 ```javascript
+// examples/scripts/05.js
 define(['t3'], function (t3) {
-  return t3.run({
-    selector: '#canvas',
+  return t3({
+    target: '#canvas',
     init: function () {
       var scene,
         geometry,
@@ -303,7 +311,7 @@ define(['t3'], function (t3) {
       this.sphere.position.set(100, 100, 100);
       scene.add(this.sphere);
     },
-    update: function (delta) {
+    tick: function (delta) {
       var me = this;
       ['cube', 'cylinder', 'sphere'].forEach(function (v) {
         me[v].rotation.x += 0.01;
@@ -339,9 +347,10 @@ instance.setActiveScene(scenes[current]);
 Since the application has a pool of cameras, adding more cameras is as easy as registering it with a name just like changing scenes:
 
 ```javascript
+// examples/scripts/06.js
 define(['t3'], function (t3) {
-  return t3.run({
-    selector: '#canvas',
+  return t3({
+    target: '#canvas',
     init: function () {
       var camera,
         width = window.innerWidth,
@@ -366,7 +375,7 @@ define(['t3'], function (t3) {
       camera.lookAt(new THREE.Vector3(100, 100, 100));
       this
         .addCamera(camera, 'orthographic')
-        // add orbit controls to the camera
+        // adds orbit controls to the camera
         .createCameraControls(camera);
 
       var geometry = new THREE.BoxGeometry(20, 20, 20);
@@ -376,7 +385,7 @@ define(['t3'], function (t3) {
       this.activeScene
         .add(this.cube);
     },
-    update: function (delta) {
+    tick: function () {
       this.cube.rotation.x += 0.01;
       this.cube.rotation.y += 0.01;
     }
@@ -408,19 +417,19 @@ instance.setActiveCamera(cameras[current]);
 If you don't like the dark theme you can switch to the light theme on the default scene by passing `theme: 'light'` in the configuration options:
 
 ```javascript
+// examples/scripts/07.js
 define(['t3'], function (t3) {
-  return t3.run({
-    selector: '#canvas',
+  return t3({
+    target: '#canvas',
     theme: 'light',
     init: function () {
       var geometry = new THREE.BoxGeometry(20, 20, 20);
       var material = new THREE.MeshNormalMaterial();
       this.cube = new THREE.Mesh(geometry, material);
       this.cube.position.set(100, 100, 100);
-      this.activeScene
-        .add(this.cube);
+      this.activeScene.add(this.cube);
     },
-    update: function (delta) {
+    tick: function () {
       this.cube.rotation.x += 0.01;
       this.cube.rotation.y += 0.01;
     }
@@ -428,8 +437,10 @@ define(['t3'], function (t3) {
 });
 ```
 
+<!--
 <iframe id="t307" class="t3-example" src="../examples/?k=07">
 </iframe>
+--!>
 
 [Fullscreen >](http://maurizzzio.github.io/t3/examples/?k=07)
 [Source Code >](http://github.com/maurizzzio/t3/blob/master/examples/scripts/07.js)
@@ -437,6 +448,7 @@ define(['t3'], function (t3) {
 Wanna roll your own? Just add an object to the object `t3.themes` and you're done!
 
 ```javascript
+// examples/scripts/071.js
 define(['t3'], function (t3) {
 
   t3.themes.sandyStone = {
@@ -445,8 +457,8 @@ define(['t3'], function (t3) {
     groundColor: 0xA7A37E
   };
 
-  return t3.run({
-    selector: '#canvas',
+  return t3({
+    target: '#canvas',
     theme: 'sandyStone',
     init: function () {
       var geometry = new THREE.BoxGeometry(20, 20, 20);
@@ -456,7 +468,7 @@ define(['t3'], function (t3) {
       this.activeScene
         .add(this.cube);
     },
-    update: function (delta) {
+    tick: function () {
       this.cube.rotation.x += 0.01;
       this.cube.rotation.y += 0.01;
     }
@@ -470,8 +482,10 @@ The available configuration options are:
 - fogColor (used in the `THREE.Fog` instance)
 - groundColor (ground color of the helper)
 
+<!--
 <iframe id="t3071" class="t3-example" src="../examples/?k=071">
 </iframe>
+-->
 
 [Fullscreen >](http://maurizzzio.github.io/t3/examples/?k=071)
 [Source Code >](http://github.com/maurizzzio/t3/blob/master/examples/scripts/071.js)
@@ -481,9 +495,10 @@ The available configuration options are:
 Another useful utility that the template has is the possibility of caching elements, `three.js` defines the field `name` for any `THREE.Object3D` which allows to make lookups ([Source](https://github.com/mrdoob/three.js/blob/master/src/core/Object3D.js#L457-485)), the template extends this functionality and makes it possible to save the last added/removed object from any instance of `THREE.Object3D` ([Source](https://github.com/maurizzzio/t3/blob/master/src/controller/Application.js#L556-596))
 
 ```javascript
+// examples/scripts/08.js
 define(['t3'], function (t3) {
-  return t3.run({
-    selector: '#canvas',
+  return t3({
+    target: '#canvas',
     injectCache: true,
     init: function () {
       var geometry = new THREE.BoxGeometry(20, 20, 20);
@@ -491,8 +506,8 @@ define(['t3'], function (t3) {
       var cube = new THREE.Mesh(geometry, material);
       cube.position.set(100, 100, 100);
       // since THREE.Object3D.prototype was injected with the method
-      // `cache` we can call it to save the last added/removed object
-      // under `this.__t3cache__` passing a name
+      // `cache` we can call it to save the object under this
+      // instance `__t3cache__`
       this.activeScene
         .add(cube)
         // unique identifier = cube
@@ -503,7 +518,7 @@ define(['t3'], function (t3) {
       //   .remove(cube)
       //   .cache();
     },
-    update: function (delta) {
+    tick: function () {
       var cube = this.getFromCache('cube');
       cube.rotation.x += 0.01;
       cube.rotation.y += 0.01;
@@ -512,43 +527,13 @@ define(['t3'], function (t3) {
 });
 ```
 
+<!--
 <iframe id="t308" class="t3-example" src="../examples/?k=08">
 </iframe>
+-->
 
 [Fullscreen >](http://maurizzzio.github.io/t3/examples/?k=08)
 [Source Code >](http://github.com/maurizzzio/t3/blob/master/examples/scripts/08.js)
-
-### Adding custom functionality by extending t3.Application
-
-`t3.run` creates in fact a subclass of `t3.Application` allowing an application to be quickly started, you can extend the functionality of the `t3.Application` class by creating a subclass:
-
-```javascript
-Application.run = function (options) {
-  options = _.merge({
-    init: function () {},
-    update: function () {},
-  }, options);
-  assert(options.selector, 'canvas selector required');
-
-  var QuickLaunch = function (options) {
-    Application.call(this, options);
-    options.init.call(this, options);
-  };
-  QuickLaunch.prototype = Object.create(Application.prototype);
-
-  QuickLaunch.prototype.update = function (delta) {
-    Application.prototype.update.call(this, delta);
-    options.update.call(this, delta);
-  };
-
-  return new QuickLaunch(options);
-};
-```
-
-### TODO list
-
-- Render only on mouseover
-- Pause if not visible
 
 Development
 -----------
@@ -558,13 +543,13 @@ After cloning the repo install the required node dependencies with:
 npm install
 ```
 
-Generate the bundle with:
+Preview the landing page with:
 
 ```javascript
 gulp
 ```
 
-This will generate an unminified file since it creates the bundle with [watchify](https://github.com/substack/watchify), if you want to build the minified file including its source map execute:
+Build the dist files with:
 
 ```javascript
 gulp build
@@ -575,35 +560,18 @@ Project structure
 Generated by [tree](http://mama.indstate.edu/users/ice/tree/):
 ```
 src
-├── controller
-│   ├── Application.js
-│   ├── Keyboard.js
-│   └── LoopManager.js
+├── Application.js
 ├── index.js
 ├── lib
-│   ├── OrbitControls.js
-│   ├── THREEx
-│   │   ├── FullScreen.js
-│   │   ├── WindowResize.js
-│   │   └── index.js
-│   ├── dat.gui.min.js
-│   └── stats.min.js
+│   └── OrbitControls.js
 ├── model
 │   └── Coordinates.js
 └── themes
     ├── dark.js
+    ├── index.js
     └── light.js
-
 5 directories, 13 files
 ```
-
-Powered by <a href="http://maurizzzio.github.io/PojoViz/public/vulcanize.html#readme">PojoViz</a>:
-
-<a class="button" href="javascript:;" id="show-pojoviz">
-  View the structure
-</a>
-
-<iframe height="0" id="pojoviz-frame" src=""></iframe>
 
 Changelog
 ---------
@@ -620,7 +588,7 @@ Changelog
 
 0.2.3
 ```plain
-`ambientConfig` renamed to `helpersConfig`
+`ambientConfig` renamed to `helpersOptions`
 `Coordinates` now uses `THREE.Grid`
 ```
 
@@ -631,7 +599,7 @@ available as `t3-boilerplate` in npm
 
 0.2.0
 ```plain
-config.id replaced with config.selector in the configuration options of t3.run
+config.id replaced with config.selector in the configuration options of t3
 ```
 
 0.1.3
@@ -654,7 +622,7 @@ Custom themes
 
 ```plain
 Fixed some typos in the documentation
-`t3.run` is now an alias for `t3.Application.run`
+`t3` is now an alias for `t3.Application.run`
 ```
 
 Acknowledgments
@@ -666,7 +634,6 @@ Also this project wouldn't have been possible without the help from the followin
 
 - [Browserify](http://browserify.org/)
 - [Gulp](http://gulpjs.com/)
-- [THREEx](http://www.threejsgames.com/extensions/)
 - [Flatdoc](http://ricostacruz.com/flatdoc/)
 - [JSDoc](http://usejsdoc.org)
 

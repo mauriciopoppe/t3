@@ -1,6 +1,6 @@
 define(['t3'], function (t3) {
-  return t3.run({
-    selector: '#canvas',
+  return t3({
+    target: '#canvas',
     init: function () {
       var scene,
         geometry,
@@ -34,7 +34,7 @@ define(['t3'], function (t3) {
       this.sphere.position.set(100, 100, 100);
       scene.add(this.sphere);
     },
-    update: function (delta) {
+    tick: function (delta) {
       var me = this;
       ['cube', 'cylinder', 'sphere'].forEach(function (v) {
         me[v].rotation.x += 0.01;

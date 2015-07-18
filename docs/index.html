@@ -51,6 +51,8 @@
     </div>
     <div class='right'>
       <!-- GitHub buttons: see http://ghbtns.com -->
+      <a href="https://twitter.com/share" class="twitter-share-button" data-text="t3 - three.js boilerplate" data-via="iMauricio" data-hashtags="threejs">Tweet</a>
+      <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
       <iframe src="http://ghbtns.com/github-btn.html?user=maurizzzio&amp;repo=T3&amp;type=watch&amp;count=true" allowtransparency="true" frameborder="0" scrolling="0" width="110" height="20"></iframe>
     </div>
   </div>
@@ -65,18 +67,17 @@
   <script>
       $('[role~="flatdoc"]').on('flatdoc:ready', function () {
         function getExample(id, fn) {
-          var innerFrame = document.querySelector('#t3' + id).contentWindow;
+          var el = document.querySelector('#t3' + id);
+          var innerFrame = el.contentWindow;
           innerFrame.requirejs([id], function (instance) {
-            fn(instance);
+            instance && fn(instance, el);
           })
         }
 
         // example 03
         $('#tp03').click(function (e) {
           getExample('03', function (instance) {
-            var paused = instance.loopManager.pause;
-            console.log(instance);
-            instance.loopManager[paused ? 'start' : 'stop']();
+            instance.shell.paused = !instance.shell.paused;
           });
         });
 
@@ -110,7 +111,37 @@
               height: 700
             });
         });
+
+        function isElementInViewport (el) {
+          //special bonus for those using jQuery
+          if (typeof jQuery === "function" && el instanceof jQuery) {
+            el = el[0];
+          }
+
+          var rect = el.getBoundingClientRect();
+
+          return (
+          rect.top >= 0 &&
+          rect.left >= 0 &&
+          rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) && /*or $(window).height() */
+          rect.right <= (window.innerWidth || document.documentElement.clientWidth) /*or $(window).width() */
+          );
+        }
+
+//        var ids = ['01', '02'];
+//        $(window).on('scroll', function () {
+//          ids.forEach(function (id) {
+//            getExample(id, function (instance, frame) {
+////              if (!isElementInViewport(frame)) {
+////                instance.shell.paused = true;
+////              } else {
+////                instance.shell.paused = false;
+////              }
+//            });
+//          })
+//        });
       });
+
   </script>
 
 </body>

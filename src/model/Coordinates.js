@@ -48,7 +48,7 @@ function Coordinates(config, theme) {
    * @type {Object}
    */
   this.gridX = {
-    name: 'XZ grid',
+    name: 'XY grid',
     mesh: this.drawGrid({size:10000, scale:0.01, color: theme.gridColor}),
     visible: config.gridX !== undefined ? config.gridX : true
   };
@@ -59,7 +59,7 @@ function Coordinates(config, theme) {
    * @type {Object}
    */  
   this.gridY = {
-    name: 'YZ grid',
+    name: 'XZ grid',
     mesh: this.drawGrid({size:10000, scale:0.01, orientation:"y", color: theme.gridColor}),
     visible: config.gridY !== undefined ? config.gridY : false
   };
@@ -70,7 +70,7 @@ function Coordinates(config, theme) {
    * @type {Object}
    */
   this.gridZ = {
-    name: 'XY grid',
+    name: 'YZ grid',
     mesh: this.drawGrid({size:10000, scale:0.01, orientation:"z", color: theme.gridColor}),
     visible: config.gridZ !== undefined ? config.gridZ : false
   };
@@ -108,7 +108,7 @@ Coordinates.prototype.initDatGui = function (gui) {
   var me = this,
     folder;
 
-  folder = gui.addFolder('Scene helpers');
+  folder = gui.addFolder('default scene helpers');
   for (var key in me) {
     if (me.hasOwnProperty(key)) {
       var v = me[key];

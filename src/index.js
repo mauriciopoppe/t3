@@ -1,24 +1,18 @@
 require('./lib/OrbitControls');
 
+var extend = require('extend');
+
 /**
  * t3
  * @namespace
  * @type {Object}
  */
-var Application = require('./controller/Application');
-var t3 = {
+var Application = require('./Application');
+extend(Application, {
   model: {
     Coordinates: require('./model/Coordinates')
   },
-  themes: require('./themes/'),
-  controller: {
-    Application: Application,
-    Keyboard: require('./controller/Keyboard'),
-    LoopManager: require('./controller/LoopManager')
-  },
-  Application: Application,
+  themes: require('./themes/')
+});
 
-  // alias
-  run: Application.run
-};
-module.exports = t3;
+module.exports = Application;

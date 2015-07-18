@@ -20,5 +20,7 @@ requirejs.config({
       var kv = v.split('=');
       params[kv[0]] = kv[1];
     });
-  requirejs([params.k], function () { });
+  if (parseInt(params.k) < 9) {
+    requirejs([params.k], function () { });
+  }
 })();

@@ -5,18 +5,17 @@ var assert = function (condition, message) {
     throw message || 'assertion failed';
   }
 };
-
 var emptyFn = function () {};
+
+var THREE = window.THREE;
+
 var extend = require('extend');
 var Stats = require('stats-js');
 var dat = require('dat-gui');
-var THREE = window.THREE;
+var shell = require('game-shell');
+var Coordinates = require('./model/Coordinates');
+var themes = require('./themes/');
 
-var Coordinates = require('../model/Coordinates');
-var Keyboard = require('./Keyboard');
-var LoopManager = require('./LoopManager');
-var THREEx = require('../lib/THREEx/');
-var themes = require('../themes/');
 /**
  * @module controller/Application
  */
@@ -25,51 +24,49 @@ var themes = require('../themes/');
  * Each instance controls one element of the DOM, besides creating
  * the canvas for the three.js app it creates a dat.gui instance
  * (to control objects of the app with a gui) and a Stats instance
- * (to view the current framerate)
  *
  * @class
- * @param {Object} config An object containing the following:
- * @param {string} [config.id=null] The id of the DOM element to inject the elements to
- * @param {number} [config.width=window.innerWidth]
+ * @param {Object} options An object containing the following:
+ * @param {string} [options.selector=null] A css selector to the element to inject the demo
+ * @param {number} [options.width=window.innerWidth]
  * The width of the canvas
- * @param {number} [config.height=window.innerHeight]
+ * @param {number} [options.height=window.innerHeight]
  * The height of the canvas
- * @param {boolean} [config.renderImmediately=true]
- * False to disable the game loop when the application starts, if
- * you want to resume the loop call `application.loopManager.start()`
- * @param {boolean} [config.injectCache=false]
+ * @param {boolean} [options.injectCache=false]
  * True to add a wrapper over `THREE.Object3D.prototype.add` and
  * `THREE.Object3D.prototype.remove` so that it catches the last element
  * and perform additional operations over it, with this mechanism
  * we allow the application to have an internal cache of the elements of
  * the application
- * @param {boolean} [config.fullScreen=false]
- * True to make this app fullscreen adding additional support for
- * window resize events
- * @param {string} [config.theme='dark']
+ * @param {string} [options.theme='dark']
  * Theme used in the default scene, it can be `light` or `dark`
- * @param {object} [config.ambientConfig={}]
- * Additional configuration for the ambient, see the class {@link
- * Coordinates}
- * @param {object} [config.defaultSceneConfig={}] Additional config
+ * @param {object} [options.ambientConfig={}]
+ * Additional optionsuration for the ambient, see the class {@link
+  * Coordinates}
+ * @param {object} [options.defaultSceneOptions={}] Additional options
  * for the default scene created for this world
  */
-function Application(config) {
-  config = extend({
-    selector: null,
+function Application(options) {
+  if (!(this instanceof Application)) {
+    return new Application(options);
+  }
+
+  this.options = extend(true, {
+    target: null,
     width: window.innerWidth,
     height: window.innerHeight,
-    renderImmediately: true,
     injectCache: false,
     fullScreen: false,
     theme: 'dark',
-    helpersConfig: {},
-    defaultSceneConfig: {
+    helperOptions: {},
+    defaultSceneOptions: {
       fog: true
-    }
-  }, config);
-
-  this.initialConfig = config;
+    },
+    init: emptyFn,
+    tick: emptyFn,
+    render: emptyFn,
+    shellOptions: {}
+  }, options);
 
   /**
    * Scenes in this world, each scene should be mapped with
@@ -104,13 +101,7 @@ function Application(config) {
   this.renderer = null;
 
   /**
-   * Keyboard manager
-   * @type {Object}
-   */
-  this.keyboard = null;
-
-  /**
-   * Dat gui manager
+   * Dat gui instance
    * @type {Object}
    */
   this.datgui = null;
@@ -123,10 +114,10 @@ function Application(config) {
   this.stats = null;
 
   /**
-   * Reference to the local loop manager
+   * Reference a game-shell instance
    * @type {LoopManager}
    */
-  this.loopManager = null;
+  this.shell = null;
 
   /**
    * Colors for the default scene
@@ -140,15 +131,32 @@ function Application(config) {
    */
   this.__t3cache__ = {};
 
-  Application.prototype.initApplication.call(this);
+  this.gameShell();
 }
 
 /**
- * Getter for the initial config
+ * Initializes the game loop by creating an instance of game-shell
+ * @return {this}
+ */
+Application.prototype.gameShell = function () {
+  this.shell = shell(extend(this.options.shellOptions, {
+    element: this.options.target
+  }));
+
+  this.shell.on('init', this.init.bind(this));
+  this.shell.on('tick', this.tick.bind(this));
+  this.shell.on('render', this.render.bind(this));
+  this.shell.on('resize', this.resize.bind(this));
+
+  return this;
+};
+
+/**
+ * Getter for the initial options
  * @return {Object}
  */
-Application.prototype.getConfig = function () {
-  return this.initialConfig;
+Application.prototype.getOptions = function () {
+  return this.options;
 };
 
 /**
@@ -162,14 +170,14 @@ Application.prototype.getConfig = function () {
  * - Calls the game loop
  *
  */
-Application.prototype.initApplication = function () {
-  var me = this,
-    config = me.getConfig();
+Application.prototype.init = function () {
+  var me = this;
+  var options = me.getOptions();
 
-  me.injectCache(config.injectCache);
+  me.injectCache(options.injectCache);
 
   // theme
-  me.setTheme(config.theme);
+  me.setTheme(options.theme);
 
   // defaults
   me.createDefaultRenderer();
@@ -180,14 +188,40 @@ Application.prototype.initApplication = function () {
   // utils
   me.initDatGui();
   me.initStats();
-  me.initMask()
-    .maskVisible(!config.renderImmediately);
-  me.initFullScreen();
-  me.initKeyboard();
+
+  // models
   me.initCoordinates();
 
-  // game loop
-  me.gameLoop();
+  me.options.init.call(this);
+};
+
+/**
+ * Creates the default THREE.WebGLRenderer used in the world
+ * @return {this}
+ */
+Application.prototype.createDefaultRenderer = function () {
+  var me = this;
+  var options = me.getOptions();
+  var renderer = new THREE.WebGLRenderer({
+      antialias: true
+  });
+  renderer.setClearColor(me.theme.clearColor, 1);
+  renderer.setSize(options.width, options.height);
+  this.shell.element.appendChild(renderer.domElement);
+  me.renderer = renderer;
+  return me;
+};
+
+Application.prototype.setActiveCamera = function (key) {
+  this.activeCamera = this.cameras[key];
+  return this;
+};
+
+Application.prototype.addCamera = function (camera, key) {
+  console.assert(camera instanceof THREE.PerspectiveCamera ||
+  camera instanceof THREE.OrthographicCamera);
+  this.cameras[key] = camera;
+  return this;
 };
 
 /**
@@ -219,9 +253,9 @@ Application.prototype.addScene = function (scene, key) {
  */
 Application.prototype.createDefaultScene = function () {
   var me = this,
-    config = me.getConfig(),
+    options = me.getOptions(),
     defaultScene = new THREE.Scene();
-  if (config.defaultSceneConfig.fog) {
+  if (options.defaultSceneOptions.fog) {
     defaultScene.fog = new THREE.Fog(me.theme.fogColor, 2000, 4000);
   }
   me
@@ -231,46 +265,15 @@ Application.prototype.createDefaultScene = function () {
 };
 
 /**
- * Creates the default THREE.WebGLRenderer used in the world
- * @return {this}
- */
-Application.prototype.createDefaultRenderer = function () {
-  var me = this,
-    config = me.getConfig();
-  var renderer = new THREE.WebGLRenderer({
-//      antialias: true
-  });
-  renderer.setClearColor(me.theme.clearColor, 1);
-  renderer.setSize(config.width, config.height);
-  document
-    .querySelector(config.selector)
-    .appendChild(renderer.domElement);
-  me.renderer = renderer;
-  return me;
-};
-
-Application.prototype.setActiveCamera = function (key) {
-  this.activeCamera = this.cameras[key];
-  return this;
-};
-
-Application.prototype.addCamera = function (camera, key) {
-  console.assert(camera instanceof THREE.PerspectiveCamera ||
-    camera instanceof THREE.OrthographicCamera);
-  this.cameras[key] = camera;
-  return this;
-};
-
-/**
  * Create the default camera used in this world which is
  * a `THREE.PerspectiveCamera`, it also adds orbit controls
  * by calling {@link #createCameraControls}
  */
 Application.prototype.createDefaultCamera = function () {
   var me = this,
-    config = me.getConfig(),
-    width = config.width,
-    height = config.height,
+    options = me.getOptions(),
+    width = options.width,
+    height = options.height,
     defaults = {
       fov: 38,
       ratio: width / height,
@@ -288,7 +291,7 @@ Application.prototype.createDefaultCamera = function () {
   defaultCamera.position.set(500, 300, 500);
 
   // transparently support window resize
-  if (config.fullScreen) {
+  if (options.fullScreen) {
     THREEx.WindowResize.bind(me.renderer, defaultCamera);
   }
 
@@ -324,7 +327,7 @@ Application.prototype.createCameraControls = function (camera) {
  */
 Application.prototype.createDefaultLights = function () {
   var light,
-      scene = this.scenes['default'];
+    scene = this.scenes['default'];
 
   light = new THREE.AmbientLight(0x222222);
   scene.add(light).cache('ambient-light-1');
@@ -343,7 +346,7 @@ Application.prototype.createDefaultLights = function () {
 /**
  * Sets the theme to be used in the default scene
  * @param {string} name Either the string `dark` or `light`
- * @todo Make the theme system extensible
+ *
  * @return {this}
  */
 Application.prototype.setTheme = function (name) {
@@ -357,62 +360,37 @@ Application.prototype.setTheme = function (name) {
 };
 
 /**
- * Creates a mask on top of the canvas when it's paused
- * @return {this}
- */
-Application.prototype.initMask = function () {
-  var me = this,
-    config = me.getConfig(),
-    mask,
-    hidden;
-  mask = document.createElement('div');
-  mask.className = 't3-mask';
-  // mask.style.display = 'none';
-  mask.style.position = 'absolute';
-  mask.style.top = '0px';
-  mask.style.width = '100%';
-  mask.style.height = '100%';
-  mask.style.background = 'rgba(0,0,0,0.5)';
-
-  document
-    .querySelector(config.selector)
-    .appendChild(mask);
-
-  me.mask = mask;
-  return me;
-};
-
-/**
- * Updates the mask visibility
- * @param  {boolean} v True to make it visible
- */
-Application.prototype.maskVisible = function (v) {
-  var mask = this.mask;
-  mask.style.display = v ? 'block' : 'none';
-};
-
-/**
  * Inits the dat.gui helper which is placed under the
  * DOM element identified by the initial configuration selector
  * @return {this}
  */
 Application.prototype.initDatGui = function () {
-  var me = this,
-    config = me.getConfig(),
-    gui = new dat.GUI({
-      autoPlace: false
-    });
+  var me = this;
+  var gui = new dat.GUI({
+    autoPlace: false
+  });
 
+  // attach dat.gui dom
   extend(gui.domElement.style, {
     position: 'absolute',
     top: '0px',
     right: '0px',
     zIndex: '1'
   });
-  document
-    .querySelector(config.selector)
-    .appendChild(gui.domElement);
+  this.shell.element.appendChild(gui.domElement);
   me.datgui = gui;
+
+  // game-shell
+  // dat gui controller
+  var folder = this.datgui.addFolder('game shell');
+  folder.add(this.shell, 'startTime');
+  //folder.add(this.shell, 'tickCount').listen();
+  //folder.add(this.shell, 'frameCount').listen();
+  //folder.add(this.shell, 'frameSkip', 0, 200).listen();
+  //folder.add(this.shell, 'tickTime', 0, 60);
+  //folder.add(this.shell, 'paused').listen();
+  //folder.add(this.shell, 'fullscreen').listen();
+
   return me;
 };
 
@@ -423,7 +401,7 @@ Application.prototype.initDatGui = function () {
  */
 Application.prototype.initStats = function () {
   var me = this,
-    config = me.getConfig(),
+    options = me.getOptions(),
     stats;
   // add Stats.js - https://github.com/mrdoob/stats.js
   stats = new Stats();
@@ -432,9 +410,7 @@ Application.prototype.initStats = function () {
     zIndex: 1,
     bottom: '0px'
   });
-  document
-    .querySelector(config.selector)
-    .appendChild( stats.domElement );
+  this.shell.element.appendChild(stats.domElement);
   me.stats = stats;
   return me;
 };
@@ -444,9 +420,7 @@ Application.prototype.initStats = function () {
  * @todo This should be used only when the canvas is active
  */
 Application.prototype.initFullScreen = function () {
-  var config = this.getConfig();
-  // allow 'f' to go fullscreen where this feature is supported
-  if(config.fullScreen && THREEx.FullScreen.available()) {
+  if(THREEx.FullScreen.available()) {
     THREEx.FullScreen.bindKey();
   }
 };
@@ -455,45 +429,32 @@ Application.prototype.initFullScreen = function () {
  * Initializes the coordinate helper (its wrapped in a model in T3)
  */
 Application.prototype.initCoordinates = function () {
-  var config = this.getConfig();
+  var options = this.getOptions();
   this.scenes['default']
     .add(
-      new Coordinates(config.helpersConfig, this.theme)
-        .initDatGui(this.datgui)
-        .mesh
-    );
+    new Coordinates(options.helperOptions, this.theme)
+      .initDatGui(this.datgui)
+      .mesh
+  );
 };
 
 /**
- * Initis the keyboard helper
- * @return {this}
- */
-Application.prototype.initKeyboard = function () {
-  this.keyboard = new Keyboard();
-  return this;
-};
-
-/**
- * Initializes the game loop by creating an instance of {@link LoopManager}
- * @return {this}
- */
-Application.prototype.gameLoop = function () {
-  var config = this.getConfig();
-  this.loopManager = new LoopManager(this, config.renderImmediately)
-    .initDatGui(this.datgui)
-    .animate();
-  return this;
-};
-
-/**
- * Update phase, the world updates by default:
+ * tick, the place where the game logic happens, t3 updates the following for you
  *
- * - The stats helper
- * - The camera controls if the active camera has one
+ * - the stats helper
+ * - the camera controls if the active camera has one
  *
- * @param {number} delta The number of seconds elapsed
  */
-Application.prototype.update = function (delta) {
+Application.prototype.tick = function () {
+  var me = this;
+  me.options.tick.call(this);
+};
+
+/**
+ * Render phase, calls `this.renderer` with `this.activeScene` and
+ * `this.activeCamera`
+ */
+Application.prototype.render = function (delta) {
   var me = this;
 
   // stats helper
@@ -503,18 +464,11 @@ Application.prototype.update = function (delta) {
   if (me.activeCamera.cameraControls) {
     me.activeCamera.cameraControls.update(delta);
   }
-};
 
-/**
- * Render phase, calls `this.renderer` with `this.activeScene` and
- * `this.activeCamera`
- */
-Application.prototype.render = function () {
-  var me = this;
-  me.renderer.render(
-    me.activeScene,
-    me.activeCamera
-  );
+  me.renderer.render(me.activeScene, me.activeCamera);
+
+  // hook
+  me.options.render.call(this, delta);
 };
 
 /**
@@ -563,11 +517,11 @@ Application.prototype.render = function () {
  */
 Application.prototype.injectCache = function (inject) {
   var me = this,
-      lastObject,
-      lastMethod,
-      add = THREE.Object3D.prototype.add,
-      remove = THREE.Object3D.prototype.remove,
-      cache = this.__t3cache__;
+    lastObject,
+    lastMethod,
+    add = THREE.Object3D.prototype.add,
+    remove = THREE.Object3D.prototype.remove,
+    cache = this.__t3cache__;
 
   if (inject) {
     THREE.Object3D.prototype.add = function (object) {
@@ -584,7 +538,7 @@ Application.prototype.injectCache = function (inject) {
 
     THREE.Object3D.prototype.cache = function (name) {
       assert(lastObject, 'T3.Application.prototype.cache: this method' +
-        ' needs a previous call to add/remove');
+      ' needs a previous call to add/remove');
       if (lastMethod === 'add') {
         lastObject.name = lastObject.name || name;
         assert(lastObject.name);
@@ -613,36 +567,11 @@ Application.prototype.getFromCache = function (name) {
   return this.__t3cache__[name];
 };
 
-/**
- * @static
- * Creates a subclass of Application whose instances don't need to
- * worry about the inheritance process
- * @param  {Object} options The same object passed to the {@link Application}
- * constructor
- * @param {Object} options.init Initialization phase, function called in
- * the constructor of the subclass
- * @param {Object} options.update Update phase, function called as the
- * update function of the subclass, it also calls Application's update
- * @return {t3.QuickLaunch} An instance of the subclass created in
- * this function
- */
-Application.run = function (options) {
-  options.init = options.init || emptyFn;
-  options.update = options.update || emptyFn;
-  assert(options.selector, 'canvas selector required');
-
-  var QuickLaunch = function (options) {
-    Application.call(this, options);
-    options.init.call(this, options);
-  };
-  QuickLaunch.prototype = Object.create(Application.prototype);
-
-  QuickLaunch.prototype.update = function (delta) {
-    Application.prototype.update.call(this, delta);
-    options.update.call(this, delta);
-  };
-
-  return new QuickLaunch(options);
+Application.prototype.resize = function () {
+  // notify the renderer of the size change
+  this.renderer.setSize(window.innerWidth, window.innerHeight);
+  this.activeCamera.aspect	= window.innerWidth / window.innerHeight;
+  this.activeCamera.updateProjectionMatrix();
 };
 
 module.exports = Application;

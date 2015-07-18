@@ -1,6 +1,6 @@
 define(['t3'], function (t3) {
-  return t3.run({
-    selector: '#canvas',
+  return t3({
+    target: '#canvas',
     init: function () {
       var camera,
         width = window.innerWidth,
@@ -35,7 +35,7 @@ define(['t3'], function (t3) {
       this.activeScene
         .add(this.cube);
     },
-    update: function (delta) {
+    tick: function () {
       this.cube.rotation.x += 0.01;
       this.cube.rotation.y += 0.01;
     }

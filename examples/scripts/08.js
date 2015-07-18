@@ -1,6 +1,6 @@
 define(['t3'], function (t3) {
-  return t3.run({
-    selector: '#canvas',
+  return t3({
+    target: '#canvas',
     injectCache: true,
     init: function () {
       var geometry = new THREE.BoxGeometry(20, 20, 20);
@@ -20,7 +20,7 @@ define(['t3'], function (t3) {
       //   .remove(cube)
       //   .cache();
     },
-    update: function (delta) {
+    tick: function () {
       var cube = this.getFromCache('cube');
       cube.rotation.x += 0.01;
       cube.rotation.y += 0.01;

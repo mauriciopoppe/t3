@@ -6,8 +6,8 @@ define(['t3'], function (t3) {
     groundColor: 0xA7A37E
   };
 
-  return t3.run({
-    selector: '#canvas',
+  return t3({
+    target: '#canvas',
     theme: 'sandyStone',
     init: function () {
       var geometry = new THREE.BoxGeometry(20, 20, 20);
@@ -17,7 +17,7 @@ define(['t3'], function (t3) {
       this.activeScene
         .add(this.cube);
     },
-    update: function (delta) {
+    tick: function () {
       this.cube.rotation.x += 0.01;
       this.cube.rotation.y += 0.01;
     }
