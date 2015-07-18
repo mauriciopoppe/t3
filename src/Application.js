@@ -40,8 +40,8 @@ var themes = require('./themes/');
  * the application
  * @param {string} [options.theme='dark']
  * Theme used in the default scene, it can be `light` or `dark`
- * @param {object} [options.ambientConfig={}]
- * Additional optionsuration for the ambient, see the class {@link
+ * @param {object} [options.helperOptions={}]
+ * Additional options for the ambient, see the class {@link
   * Coordinates}
  * @param {object} [options.defaultSceneOptions={}] Additional options
  * for the default scene created for this world
@@ -212,57 +212,32 @@ Application.prototype.createDefaultRenderer = function () {
   return me;
 };
 
+/**
+ * Updates the camera to be used to render the scene
+ *
+ * @param {string} key
+ * @return {this}
+ */
 Application.prototype.setActiveCamera = function (key) {
   this.activeCamera = this.cameras[key];
   return this;
 };
 
-Application.prototype.addCamera = function (camera, key) {
+/**
+ * Adds a camera to the pool of cameras, it needs to be a THREE.PerspectiveCamera
+ * or a THREE.OrthographicCamera
+ *
+ * @param {string} key
+ * @param {THREE.PerspectiveCamera|THREE.OrthographicCamera} camera
+ * @returns {Application}
+ */
+Application.prototype.addCamera = function (key, camera) {
   console.assert(camera instanceof THREE.PerspectiveCamera ||
   camera instanceof THREE.OrthographicCamera);
   this.cameras[key] = camera;
   return this;
 };
 
-/**
- * Sets the active scene (it must be a registered scene registered
- * with {@link #addScene})
- * @param {string} key The string which was used to register the scene
- * @return {this}
- */
-Application.prototype.setActiveScene = function (key) {
-  this.activeScene = this.scenes[key];
-  return this;
-};
-
-/**
- * Adds a scene to the scene pool
- * @param {THREE.Scene} scene
- * @param {string} key
- * @return {this}
- */
-Application.prototype.addScene = function (scene, key) {
-  console.assert(scene instanceof THREE.Scene);
-  this.scenes[key] = scene;
-  return this;
-};
-
-/**
- * Creates a scene called 'default' and sets it as the active one
- * @return {this}
- */
-Application.prototype.createDefaultScene = function () {
-  var me = this,
-    options = me.getOptions(),
-    defaultScene = new THREE.Scene();
-  if (options.defaultSceneOptions.fog) {
-    defaultScene.fog = new THREE.Fog(me.theme.fogColor, 2000, 4000);
-  }
-  me
-    .addScene(defaultScene, 'default')
-    .setActiveScene('default');
-  return me;
-};
 
 /**
  * Create the default camera used in this world which is
@@ -297,7 +272,7 @@ Application.prototype.createDefaultCamera = function () {
 
   me
     .createCameraControls(defaultCamera)
-    .addCamera(defaultCamera, 'default')
+    .addCamera('default', defaultCamera)
     .setActiveCamera('default');
 
   return me;
@@ -318,6 +293,46 @@ Application.prototype.createCameraControls = function (camera) {
   //camera.cameraControls.maxPolarAngle = Math.PI / 2 * 0.99;
   //camera.cameraControls.target.set(100, 100, 100);
   camera.cameraControls.target.set(0, 0, 0);
+  return me;
+};
+
+/**
+ * Sets the active scene (it must be a registered scene registered
+ * with {@link #addScene})
+ * @param {string} key The string which was used to register the scene
+ * @return {this}
+ */
+Application.prototype.setActiveScene = function (key) {
+  this.activeScene = this.scenes[key];
+  return this;
+};
+
+/**
+ * Adds a scene to the scene pool
+ * @param {THREE.Scene} scene
+ * @param {string} key
+ * @return {this}
+ */
+Application.prototype.addScene = function (key, scene) {
+  console.assert(scene instanceof THREE.Scene);
+  this.scenes[key] = scene;
+  return this;
+};
+
+/**
+ * Creates a scene called 'default' and sets it as the active one
+ * @return {this}
+ */
+Application.prototype.createDefaultScene = function () {
+  var me = this,
+    options = me.getOptions(),
+    defaultScene = new THREE.Scene();
+  if (options.defaultSceneOptions.fog) {
+    defaultScene.fog = new THREE.Fog(me.theme.fogColor, 2000, 4000);
+  }
+  me
+    .addScene('default', defaultScene)
+    .setActiveScene('default');
   return me;
 };
 
@@ -384,12 +399,12 @@ Application.prototype.initDatGui = function () {
   // dat gui controller
   var folder = this.datgui.addFolder('game shell');
   folder.add(this.shell, 'startTime');
-  //folder.add(this.shell, 'tickCount').listen();
-  //folder.add(this.shell, 'frameCount').listen();
-  //folder.add(this.shell, 'frameSkip', 0, 200).listen();
-  //folder.add(this.shell, 'tickTime', 0, 60);
-  //folder.add(this.shell, 'paused').listen();
-  //folder.add(this.shell, 'fullscreen').listen();
+  folder.add(this.shell, 'tickCount').listen();
+  folder.add(this.shell, 'frameCount').listen();
+  folder.add(this.shell, 'frameSkip').listen();
+  folder.add(this.shell, 'tickTime').listen();
+  folder.add(this.shell, 'paused').listen();
+  folder.add(this.shell, 'fullscreen').listen();
 
   return me;
 };
@@ -413,16 +428,6 @@ Application.prototype.initStats = function () {
   this.shell.element.appendChild(stats.domElement);
   me.stats = stats;
   return me;
-};
-
-/**
- * Binds the F key to make a world go full screen
- * @todo This should be used only when the canvas is active
- */
-Application.prototype.initFullScreen = function () {
-  if(THREEx.FullScreen.available()) {
-    THREEx.FullScreen.bindKey();
-  }
 };
 
 /**

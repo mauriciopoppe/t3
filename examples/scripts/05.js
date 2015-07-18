@@ -7,8 +7,8 @@ define(['t3'], function (t3) {
         material;
 
       // scene setup
-      this.addScene(new THREE.Scene(), 'cone');
-      this.addScene(new THREE.Scene(), 'sphere');
+      this.addScene('cone', new THREE.Scene());
+      this.addScene('sphere', new THREE.Scene());
 
       // default scene
       scene = this.scenes['default'];
@@ -34,7 +34,7 @@ define(['t3'], function (t3) {
       this.sphere.position.set(100, 100, 100);
       scene.add(this.sphere);
     },
-    tick: function (delta) {
+    tick: function () {
       var me = this;
       ['cube', 'cylinder', 'sphere'].forEach(function (v) {
         me[v].rotation.x += 0.01;

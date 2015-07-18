@@ -118,7 +118,7 @@ This basic "world" has:
 - A default scene
 - A default camera with [OrbitControls](https://github.com/mrdoob/three.js/blob/master/examples/js/controls/OrbitControls.js)
 - A set of axes positioned at the center of the scene ([Source](https://github.com/maurizzzio/t3/blob/master/src/model/Coordinates.js#L10))
-- A gui control to see the info stored on [`game-shell`](https://github.com/mikolalysenko/game-shell) ([Source](https://github.com/maurizzzio/t3/blob/master/src/model/Coordinates.js#L58-67))
+- A gui control to see the info stored on [`game-shell`](https://github.com/mikolalysenko/game-shell) ([Source](https://github.com/maurizzzio/t3/blob/master/src/Application.js#L385-L392))
 - A gui control to hide/show helpers on the main scene ([Source](https://github.com/maurizzzio/t3/blob/master/src/model/Coordinates.js#L58-67))
 
 ### init, tick and render
@@ -442,7 +442,7 @@ define(['t3'], function (t3) {
 </iframe>
 --!>
 
-[Fullscreen >](http://maurizzzio.github.io/t3/examples/?k=07)
+[Demo >](http://maurizzzio.github.io/t3/examples/?k=07)
 [Source Code >](http://github.com/maurizzzio/t3/blob/master/examples/scripts/07.js)
 
 Wanna roll your own? Just add an object to the object `t3.themes` and you're done!
@@ -487,7 +487,7 @@ The available configuration options are:
 </iframe>
 -->
 
-[Fullscreen >](http://maurizzzio.github.io/t3/examples/?k=071)
+[Demo >](http://maurizzzio.github.io/t3/examples/?k=071)
 [Source Code >](http://github.com/maurizzzio/t3/blob/master/examples/scripts/071.js)
 
 ### Caching objects

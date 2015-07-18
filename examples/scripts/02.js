@@ -6,10 +6,9 @@ define(['t3'], function (t3) {
       var material = new THREE.MeshNormalMaterial();
       this.cube = new THREE.Mesh(geometry, material);
       this.cube.position.set(100, 100, 100);
-      // this.activeScene points to this.scenes.default
       this.activeScene.add(this.cube);
     },
-    tick: function (delta) {
+    tick: function () {
       this.cube.rotation.x += 0.01;
       this.cube.rotation.y += 0.01;
     }

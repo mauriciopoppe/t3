@@ -15,7 +15,7 @@ define(['t3'], function (t3) {
       camera = new THREE.PerspectiveCamera(fov, ratio, near, far);
       camera.position.set(30, 30, 30);
       camera.lookAt(new THREE.Vector3(100, 100, 100));
-      this.addCamera(camera, 'origin');
+      this.addCamera('origin', camera);
 
       // orthographic camera
       camera = new THREE.OrthographicCamera(
@@ -24,7 +24,7 @@ define(['t3'], function (t3) {
       camera.position.set(200, 300, 200);
       camera.lookAt(new THREE.Vector3(100, 100, 100));
       this
-        .addCamera(camera, 'orthographic')
+        .addCamera('orthographic', camera)
         // adds orbit controls to the camera
         .createCameraControls(camera);
 

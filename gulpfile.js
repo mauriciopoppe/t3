@@ -1,13 +1,16 @@
+'use strict';
+
 // libs
 var browserSync = require('browser-sync');
-var watchify = require('watchify');
 var browserify = require('browserify');
 var source = require('vinyl-source-stream');
+var buffer = require('vinyl-buffer');
 
 // gulp extras
 var gulp = require('gulp');
 var compass = require('gulp-compass');
 var jsdoc = require('gulp-jsdoc');
+var uglify = require('gulp-uglify');
 var useWatchify;
 
 gulp.task('browserify', function () {
@@ -18,6 +21,18 @@ gulp.task('browserify', function () {
   })
     .bundle()
     .pipe(source('t3.js'))
+    .pipe(gulp.dest('dist'));
+});
+
+gulp.task('browserify-dist', function () {
+  browserify({
+    entries: 'src/index.js',
+    standalone: 't3'
+  })
+    .bundle()
+    .pipe(source('t3.min.js'))
+    .pipe(buffer())
+    .pipe(uglify())
     .pipe(gulp.dest('dist'));
 });
 
@@ -55,5 +70,5 @@ gulp.task('watch', ['useWatchify', 'browserSync'], function () {
 
 // main tasks
 // default, build
-gulp.task('build', ['browserify', 'compass']);
+gulp.task('build', ['browserify-dist', 'browserify']);
 gulp.task('default', ['watch']);
