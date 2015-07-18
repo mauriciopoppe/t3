@@ -575,6 +575,10 @@ src
 
 Changelog
 ---------
+0.3.0
+```plain
+game loop runs on top of `game-shell`
+```
 
 0.2.5
 ```plain
